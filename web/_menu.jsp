@@ -41,10 +41,12 @@
 
 <%if(utente!=null){%>
     <div id="menu">
+        <% if(!utente.is_admin()){%>
         <button class="float-left" onclick="location.href='<%=Utility.url%>/index.jsp'" style="pointer-events: auto;">Questionari</button>
+        <%}%>
         <% if(utente.is_admin()){%>
-            <button class="float-left" onclick="location.href='<%=Utility.url%>/questionari/configura_questionari.jsp'" style="pointer-events: auto;">Configura Questionari</button>
-            <button class="float-left" onclick="location.href='<%=Utility.url%>/sezioni/sezioni.jsp'" style="pointer-events: auto;">Sezioni</button>
+            <button class="float-left" onclick="location.href='<%=Utility.url%>/questionari/configura_questionari.jsp'" style="pointer-events: auto;">Questionari</button>
+            <!--button class="float-left" onclick="location.href='<%=Utility.url%>/sezioni/sezioni.jsp'" style="pointer-events: auto;">Sezioni</button-->
             <button class="float-left" onclick="location.href='<%=Utility.url%>/utenti/utenti.jsp'" style="pointer-events: auto;">Fornitori</button>
         <%}%>
         

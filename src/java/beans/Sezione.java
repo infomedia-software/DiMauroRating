@@ -3,6 +3,7 @@ package beans;
 public class Sezione {
     private String id;
     private int nr;
+    private String id_questionario;
     private String testo_ita;
     private String testo_eng;
     private String note;
@@ -57,6 +58,14 @@ public class Sezione {
 
     public void setNote(String note) {
         this.note = note;
+    }
+
+    public String getId_questionario() {
+        return id_questionario;
+    }
+
+    public void setId_questionario(String id_questionario) {
+        this.id_questionario = id_questionario;
     }
     
     

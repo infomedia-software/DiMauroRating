@@ -46,6 +46,7 @@ public class GestioneSezioni {
                 Sezione s=new Sezione();
                 s.setId(rs.getString("id"));
                 s.setNr(rs.getInt("nr"));
+                s.setId_questionario(rs.getString("id_questionario"));
                 s.setTesto_ita(rs.getString("testo_ita"));
                 s.setTesto_eng(rs.getString("testo_eng"));
                 s.setNote(rs.getString("note"));
@@ -66,8 +67,11 @@ public class GestioneSezioni {
         return toReturn;
     }
     
-    public String nuova_sezione(){
-        return Utility.getIstanza().query_insert("INSERT INTO sezioni(stato)VALUES('1')");
+    public String nuova_sezione(String id_questionario){
+        double nr=Utility.getIstanza().query_select_double("SELECT MAX(nr)+1 as nr FROM sezioni WHERE id_questionario="+Utility.is_null(id_questionario)+" AND stato='1'", "nr");
+        if(nr==0)
+            nr=1;
+        return Utility.getIstanza().query_insert("INSERT INTO sezioni(nr,id_questionario,stato)VALUES("+nr+",'"+id_questionario+"','1')");
     }
     
     public String modifica_sezione(String id_sezione,String campo_da_modificare, String new_valore){

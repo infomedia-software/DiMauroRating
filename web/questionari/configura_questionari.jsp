@@ -77,7 +77,10 @@
                 </tr>
             <% for(Questionario q:GestioneQuestionari.getIstanza().ricerca_questionari("")){ %>
             <tr>
-                <td><a class="pulsante_tabella color_orange" href="<%=Utility.url%>/domande/domande.jsp?id_questionario=<%=q.getId()%>"><img src="<%=Utility.img_edit%>">Domande</a></td>
+                <td>
+                    <a class="pulsante_tabella color_orange" href="<%=Utility.url%>/domande/domande.jsp?id_questionario=<%=q.getId()%>"><img src="<%=Utility.img_edit%>">Domande</a>
+                    <a class="pulsante_tabella color_orange" href="<%=Utility.url%>/sezioni/sezioni.jsp?id_questionario=<%=q.getId()%>"><img src="<%=Utility.img_edit%>">Sezioni</a>
+                </td>
                 <td>
                     <input type="text" placeholder="Nr." value="<%=q.getNr()%>" onchange="modifica_questionario('<%=q.getId()%>',this)" id="nr">
                     <input type="text" value="<%=q.getAnno()%>" onchange="modifica_questionario('<%=q.getId()%>',this)" id="anno">
@@ -88,6 +91,11 @@
                 </td>
                 <td style="text-align: center;"><input type="checkbox" id="attivo" <% if(q.is_attivo()){%>checked="true"<%}%>  onchange="modifica_questionario('<%=q.getId()%>',this)"></td>
                 <td><button class="pulsante_tabella" onclick="modifica_questionario('<%=q.getId()%>',this)" id="stato" refresh="si"><img src="<%=Utility.img_delete%>">Cancella</button></td>
+            </tr>
+            <tr>
+                <td colspan="5">
+                     <a class="pulsante_tabella float-right color_evasa" href="<%=Utility.url%>/questionari/questionari_utenti.jsp?id_questionario=<%=q.getId()%>"><img src="<%=Utility.img_edit%>">Questionari Fornitori</a>
+                </td>
             </tr>
             <%}%>
             </table>

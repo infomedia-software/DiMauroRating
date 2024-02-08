@@ -144,6 +144,73 @@ public class GestioneQuestionari {
         return toReturn;
     }
     
+     
+    public ArrayList<QuestionarioUtente> ricerca_questionari_utenti_id_questionario(String id_questionario){
+        ArrayList<QuestionarioUtente> toReturn=new ArrayList<QuestionarioUtente>();
+        
+        Connection conn=null;
+        PreparedStatement stmt=null;
+        ResultSet rs=null;
+        
+        try{            
+            String query="SELECT * FROM questionari "
+                    + " LEFT OUTER JOIN questionari_utenti ON questionari.id=questionari_utenti.id_questionario "
+                    + " LEFT OUTER JOIN utenti ON questionari_utenti.id_utente=utenti.id WHERE id_questionario="+id_questionario;
+            
+            
+            System.out.println("query->"+query);
+            conn=DBConnection.getConnection();            
+            stmt=conn.prepareStatement(query);
+            rs=stmt.executeQuery(query);
+            while(rs.next()){
+                QuestionarioUtente q=new QuestionarioUtente();
+                // questionari
+                q.setId_questionario(rs.getString("questionari.id"));
+                q.setAttivo(rs.getString("questionari.attivo"));
+                q.setTitolo_ita(rs.getString("questionari.titolo_ita"));
+                q.setTitolo_eng(rs.getString("questionari.titolo_eng"));
+                q.setData_creazione(rs.getString("questionari.data_creazione"));
+                q.setAnno(rs.getString("questionari.anno"));
+                q.setNr(rs.getString("questionari.nr"));
+                
+                // questionari utenti
+                q.setId(rs.getString("questionari_utenti.id"));
+                q.setData(rs.getString("questionari_utenti.data"));
+                q.setValutazione(rs.getDouble("questionari_utenti.valutazione"));
+                q.setValutazione_s1(rs.getDouble("questionari_utenti.valutazione_s1"));
+                q.setValutazione_s2(rs.getDouble("questionari_utenti.valutazione_s2"));
+                q.setValutazione_s3(rs.getDouble("questionari_utenti.valutazione_s3"));
+                q.setValutazione_s4(rs.getDouble("questionari_utenti.valutazione_s4"));
+                q.setValutazione_s5(rs.getDouble("questionari_utenti.valutazione_s5"));
+                q.setData_ora_invio(rs.getString("questionari_utenti.data_ora_invio"));
+                q.setData_ora_valutazione(rs.getString("questionari_utenti.data_ora_valutazione"));
+                q.setNote(rs.getString("questionari_utenti.note"));
+                q.setStato(rs.getString("questionari_utenti.stato"));
+                
+                // utente
+                Utente u=new Utente();
+                u.setId(rs.getString("utenti.id"));
+                u.setRagione_sociale(rs.getString("utenti.ragione_sociale"));
+                u.setLingua(rs.getString("utenti.lingua"));
+                q.setUtente(u);
+                
+                toReturn.add(q);
+            }                   
+
+        } catch (ConnectionPoolException ex) {
+            GestioneErrori.errore("GestioneUtenti", "ricerca_questionari_utenti_id_questionario", ex);
+        } catch (SQLException ex) {
+            GestioneErrori.errore("GestioneUtenti", "ricerca_questionari_utenti_id_questionario", ex);
+        } finally {
+                DBUtility.closeQuietly(rs);
+                DBUtility.closeQuietly(stmt);
+                DBConnection.releaseConnection(conn);   
+        }                    
+        
+        
+        return toReturn;
+    }
+    
     
      public ArrayList<Domanda> ricerca_domande(String query_input){
         ArrayList<Domanda> toReturn=new ArrayList<Domanda>();
@@ -164,7 +231,7 @@ public class GestioneQuestionari {
             while(rs.next()){
                 Domanda d=new Domanda();
                 d.setId(rs.getString("domande.id"));
-                d.setId_questionario(rs.getString("id_questionario"));
+                d.setId_questionario(rs.getString("domande.id_questionario"));
                 d.setNr(rs.getInt("domande.nr"));
                 d.setTesto_ita(rs.getString("domande.testo_ita"));
                 d.setTesto_eng(rs.getString("domande.testo_eng"));
@@ -271,7 +338,7 @@ public class GestioneQuestionari {
     public String nuovo_questionario_utente(String id_questionario,String id_utente){
         String id_questionario_utente=Utility.getIstanza().query_insert("INSERT INTO questionari_utenti (id_utente,id_questionario,data,stato) "
             + " VALUES ("+Utility.is_null(id_utente)+","+Utility.is_null(id_questionario)+",DATE(NOW()),'b')");
-        ArrayList<Domanda> domande=ricerca_domande(" id_questionario="+id_questionario);
+        ArrayList<Domanda> domande=ricerca_domande(" domande.id_questionario="+id_questionario);
         if(domande.size()>0){
             String query_risposte="INSERT INTO risposte(id_questionario_utente,id_domanda,stato) VALUES ";
             for(Domanda d:domande){

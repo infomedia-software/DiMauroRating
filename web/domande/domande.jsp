@@ -13,7 +13,7 @@
     String id_questionario=Utility.elimina_null(request.getParameter("id_questionario"));
     Questionario questionario=GestioneQuestionari.getIstanza().get_questionario(id_questionario);
     ArrayList<Sezione> sezioni=GestioneSezioni.getIstanza().ricerca("");
-    ArrayList<Domanda> domande=GestioneQuestionari.getIstanza().ricerca_domande(" id_questionario="+id_questionario);
+    ArrayList<Domanda> domande=GestioneQuestionari.getIstanza().ricerca_domande(" domande.id_questionario="+id_questionario);
 %>
 
 <!DOCTYPE html>

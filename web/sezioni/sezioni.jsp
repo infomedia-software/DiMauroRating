@@ -4,7 +4,10 @@
 <%@page import="beans.Utente"%>
 <%@page import="utility.Utility"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<% Utente utente=(Utente)session.getAttribute("utente"); %>
+<% 
+    Utente utente=(Utente)session.getAttribute("utente"); 
+    String id_questionario=Utility.elimina_null(request.getParameter("id_questionario"));
+%>
 
 <!DOCTYPE html>
 <html>
@@ -16,7 +19,7 @@
             function nuova_sezione(){
                 $.ajax({
                     type: "POST",
-                    url: "__nuova_sezione.jsp",
+                    url: "__nuova_sezione.jsp?id_questionario=<%=id_questionario%>",
                     data: "",
                     dataType: "html",
                     success: function(msg){
@@ -68,10 +71,10 @@
                         <th style="width: 110px;"></th>
                     </tr>
                 <tbody>
-                <% for(Sezione s:GestioneSezioni.getIstanza().ricerca("")){ %>
+                <% for(Sezione s:GestioneSezioni.getIstanza().ricerca(" id_questionario="+id_questionario)){ %>
                 
                 <tr>
-                    <td><input type="text" placeholder="Nr." value="<%=s.getNr()%>" onchange="modifica_sezione('<%=s.getId()%>',this)" id="nr"></td>
+                    <td><input type="number" placeholder="Nr." value="<%=s.getNr()%>" onchange="modifica_sezione('<%=s.getId()%>',this)" id="nr"></td>
                     <td><input type="text" placeholder="Nome sezione in italiano" value="<%=s.getTesto_ita()%>" onchange="modifica_sezione('<%=s.getId()%>',this)" id="testo_ita"></td>
                     <td><input type="text" placeholder="Nome sezione in inglese" value="<%=s.getTesto_eng()%>" onchange="modifica_sezione('<%=s.getId()%>',this)" id="testo_eng"></td>
                     <td><button class="pulsante_tabella" onclick="modifica_sezione('<%=s.getId()%>',this)" id="stato" refresh="si"><img src="<%=Utility.img_delete%>">Cancella</button></td>

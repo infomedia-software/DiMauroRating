@@ -20,10 +20,12 @@
         <div id='container'>
         <% if(utente==null){%>
             <jsp:include page="_login.jsp"></jsp:include>
-        <%}else{%>
-            
-                <jsp:include page="_index.jsp"></jsp:include>
-            
+        <%}else{
+                if(utente.is_admin()){
+                    response.sendRedirect(Utility.url+"/questionari/configura_questionari.jsp");
+                }else{%>
+                    <jsp:include page="_index.jsp"></jsp:include>
+                <%}%>
         <%}%>
 
 </div>
