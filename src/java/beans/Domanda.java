@@ -19,11 +19,13 @@ public class Domanda {
     
     public static String tipo_TESTO="text";
     public static String tipo_NUMERO="numero";
+    public static String tipo_SI_NO="si_no";
     public static String tipo_SELECT="select";
     public static String tipo_CHECKBOX="checkbox";
     public static String tipo_ALLEGATO="allegato";
     
     public boolean is_testo(){return tipo.equals(tipo_TESTO);}
+    public boolean is_si_no(){return tipo.equals(tipo_SI_NO);}
     public boolean is_numero(){return tipo.equals(tipo_NUMERO);}
     public boolean is_select(){return tipo.equals(tipo_SELECT);}
     public boolean is_checkbox(){return tipo.equals(tipo_CHECKBOX);}

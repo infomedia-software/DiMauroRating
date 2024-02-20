@@ -1,3 +1,5 @@
+<%@page import="beans.Risposta"%>
+<%@page import="gestioneDB.GestioneQuestionari"%>
 <%@page import="beans.Utente"%>
 <%@page import="beans.Allegato"%>
 <%@page import="java.util.ArrayList"%>
@@ -6,14 +8,19 @@
 <%
     Utente utente=(Utente)session.getAttribute("utente");
     String query=Utility.elimina_null(request.getParameter("query"));
+    String id_risposta=Utility.elimina_null(request.getParameter("id_risposta"));
+    
+    Risposta r=GestioneQuestionari.getIstanza().ricerca_risposte(" risposte.id="+id_risposta).get(0);
     ArrayList<Allegato> allegati=GestioneAllegati.getIstanza().ricercaAllegati(query);
 %>
 
 <script type='text/javascript'>
     
     function aggiorna_allegati(){                
-        var queryallegati=$("#queryallegati").val();                    
-        $("#allegati").load("<%=Utility.url%>/_allegati.jsp?query="+encodeURIComponent(String(queryallegati))+" #allegati_inner",function(){nascondi_loader();});
+        //var queryallegati=$("#queryallegati").val();                    
+        //var id_risposta=$("#id_risposta").val();                    
+        //$("#allegati").load("<%=Utility.url%>/_allegati.jsp?query="+encodeURIComponent(String(queryallegati))+"&id_risposta="+id_risposta+" #allegati_inner",function(){nascondi_loader();});
+        location.reload();
     }
     
     function modifica_allegato(inField,id_allegato){
@@ -44,14 +51,16 @@
 </script>
 
 <input type='hidden' id='queryallegati' value="<%=query%>">
-
+<input type='hidden' id='id_risposta' value="<%=id_risposta%>">
 
 <div id='allegati'>
     <div id='allegati_inner'>        
         
         <%if(allegati.size()==0){%>
             <div class="messaggio">Nessun Allegato presente</div>
+            <input type='hidden' class="risposta" name="risposta" domanda="<% if(utente.is_italiano()){%><%=r.getDomanda().getTesto_ita()%><%}else{%><%=r.getDomanda().getTesto_ita()%><%}%>" value="">
         <%}else{%>
+            <input type='hidden' class="risposta" name="risposta" domanda="<% if(utente.is_italiano()){%><%=r.getDomanda().getTesto_ita()%><%}else{%><%=r.getDomanda().getTesto_ita()%><%}%>"  value="si">
             <table class="tabella">
                 <tr>  
                     <th style="width:50px"></th>

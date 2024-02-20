@@ -2,8 +2,8 @@
 <%@page import="gestioneDB.GestioneSezioni"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="beans.Sezione"%>
-<% ArrayList<Sezione> sezioni=GestioneSezioni.getIstanza().ricerca(""); %>
 <% String id_questionario=Utility.elimina_null(request.getParameter("id_questionario")); %>
+<% ArrayList<Sezione> sezioni=GestioneSezioni.getIstanza().ricerca(" id_questionario="+id_questionario); %>
 <form id="form_nuova_domanda">
     <input type="hidden" value="<%=id_questionario%>" name="id_questionario">
     <div class="etichetta">Sezione</div>

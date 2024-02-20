@@ -45,6 +45,22 @@
                 });
             }
             
+            function nuova_domanda_condizione(id_questionario, id_sezione,id_domanda_principale){
+                mostra_loader("Operazione in corso");
+                $.ajax({
+                    type: "POST",
+                    url: "__nuova_domanda.jsp?id_domanda_principale="+id_domanda_principale+"&id_questionario="+id_questionario+"&id_sezione="+id_sezione,
+                    data: $("#form_nuova_domanda").serialize(),
+                    dataType: "html",
+                    success: function(msg){
+                        aggiorna_domande();
+                    },
+                    error: function(){
+                        alert("IMPOSSIBILE EFFETTUARE L'OPERAZIONE");
+                    }
+                });
+            }
+            
             function modifica_domanda(id_domanda,inField){
                 var campo_da_modificare=inField.id;
                 var new_valore=encodeURIComponent(String(inField.value));
@@ -56,7 +72,16 @@
                     else
                         new_valore="";
                 }
-                
+                if(campo_da_modificare=="peso"){
+                    var peso=parseFloat(new_valore);
+                    if(peso<0 || peso>1){
+                        var old_value=inField.getAttribute("old_value");
+                        alert("Inserire un peso compreso tra 0 e 1");
+                        $(inField).val(old_value);
+                        $(inField).focus();
+                        return;
+                    }
+                }
                 $.ajax({
                     type: "POST",
                     url: "__modifica_domanda.jsp?id_domanda="+id_domanda+"&campo_da_modificare="+campo_da_modificare+"&new_valore="+new_valore,
@@ -92,7 +117,9 @@
                 
                 <%int i=1; for(Domanda d:domande){ %>
                 <div class="box">
-                    <h5>Domanda <%=d.getSezione().getNr()%>.<%=d.getNr()%></h5>
+                    <% if(d.getVisibile_id().equals("")){%>
+                        <h5>Domanda <%=d.getSezione().getTesto_ita()%> <%=d.getSezione().getNr()%>.<%=d.getNr()%></h5>
+                    <%}%>
                     <div class="width-50 float-left">
                         <!--div class="etichetta">Sezione</div>
                         <div class="valore">
@@ -126,6 +153,7 @@
                         <div class="etichetta">Tipologia</div>
                         <div class="valore">
                             <select id="tipo" onchange="modifica_domanda('<%=d.getId()%>',this)" refresh="si">
+                                <option value="<%=Domanda.tipo_SI_NO%>" <% if(d.is_si_no()){%>selected<%}%>>Si/No</option>
                                 <option value="<%=Domanda.tipo_TESTO%>" <% if(d.is_testo()){%>selected<%}%>>Testuale</option>
                                 <option value="<%=Domanda.tipo_NUMERO%>" <% if(d.is_numero()){%>selected<%}%>>Numerica</option>
                                 <option value="<%=Domanda.tipo_SELECT%>" <% if(d.is_select()){%>selected<%}%>>Scelta Esclusiva</option>
@@ -143,26 +171,31 @@
                     <div class="width-50 float-left">
                         <div class="etichetta">Peso</div>
                         <div class="valore">
-                            <input type="text" placeholder="Peso" value="<%=Utility.elimina_zero(d.getPeso())%>" onchange="modifica_domanda('<%=d.getId()%>',this)" id="peso">
+                            <input type="text" placeholder="Peso" min="0" max="1" old_value="<%=Utility.elimina_zero(d.getPeso())%>" value="<%=Utility.elimina_zero(d.getPeso())%>" onchange="modifica_domanda('<%=d.getId()%>',this)" id="peso">
                         </div>
-                        <div class="etichetta">Visibile se la domanda</div>
-                        <div class="valore">
-                            <select id="visibile_id" refresh="si" onchange="modifica_domanda('<%=d.getId()%>',this)">
-                                <option value="">Sempre</option>
-                                <% for(Domanda dd:domande){%>
-                                    <option value="<%=dd.getId()%>" <% if(d.getVisibile_id().equals(dd.getId())){%> selected="true" <%}%> ><%=dd.getSezione().getNr()%>.<%=dd.getNr()%></option>
-                                <%}%>
-                            </select>
-                        </div>
-                        <% if(!d.getVisibile_id().equals("")){%>
-                            <div class="etichetta">è uguale a </div>
+                            <% if(!d.getVisibile_id().equals("")){%>
+                            <div class="etichetta">Visibile se la domanda</div>
                             <div class="valore">
-                                <input type="text" id="visibile_condizione"  onchange="modifica_domanda('<%=d.getId()%>',this)" value="<%=d.getVisibile_condizione()%>">
+                                <select id="visibile_id" refresh="si" onchange="modifica_domanda('<%=d.getId()%>',this)" style="pointer-events: none;">
+                                    <option value="">Sempre</option>
+                                    <% for(Domanda dd:domande){%>
+                                        <option value="<%=dd.getId()%>" <% if(d.getVisibile_id().equals(dd.getId())){%> selected="true" <%}%> ><%=dd.getSezione().getNr()%>.<%=dd.getNr()%></option>
+                                    <%}%>
+                                </select>
                             </div>
-                        <%}%>
+                            
+                                <div class="etichetta">è uguale a </div>
+                                <div class="valore">
+                                    <input type="text" id="visibile_condizione"  onchange="modifica_domanda('<%=d.getId()%>',this)" value="<%=d.getVisibile_condizione()%>">
+                                </div>
+                            
+                            <%}%>
                     </div>
                     <div class="clear"></div>
                         <button class="pulsante_tabella float-right" onclick="modifica_domanda('<%=d.getId()%>',this)" id="stato" refresh="si"><img src="<%=Utility.img_delete%>">Cancella</button>
+                        <% if(d.getVisibile_id().equals("")){%>
+                            <button class="pulsante_tabella color_green float-right" onclick="nuova_domanda_condizione('<%=id_questionario%>','<%=d.getSezione().getId()%>','<%=d.getId()%>')"><img src="<%=Utility.img_add%>">Domanda su condizione</button>
+                        <%}%>
                     <div class="clear"></div>
                 </div>
                     <div class="height-10"></div>

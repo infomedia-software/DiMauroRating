@@ -69,6 +69,31 @@
         });
     }
     
+    function password_dimenticata(){
+        var email=prompt("Inserisci l'indirizzo email per il quale recuperare la password.");
+        if(email!="" && email!=null){
+             mostra_loader("Operazione in corso...");
+            $.ajax({
+                type: "POST",
+                url: "<%=Utility.url%>/__password_dimenticata.jsp",
+                data: "email="+email,
+                dataType: "html",
+                success: function(msg){
+                    if(msg.includes("errore")){
+                        alert(msg);
+                    }else{
+                        alert("La nuova password è stata inviata a "+email);
+                    }
+                    location.reload();
+                },
+                error: function(){
+                    alert("IMPOSSIBILE EFFETTUARE L'OPERAZIONE verifica_utente");
+                }
+            });
+            
+        }
+    
+    }
     
     $(function(){
 	$("#nome_utente").focus();
@@ -105,8 +130,10 @@
                 <button type="button" class="pulsante margin-auto" onclick="login()">Accedi</button>
             </div>
             <div class="height-10"></div>
-            <div id="registrati">
+            <div id="registrati" style="text-align: center;">
                 <button type="button" class="pulsante color_evasa margin-auto" onclick="location.href='registrati.jsp'">Registrati</button>
+                <br/>
+                <a href="#" onclick="password_dimenticata()">Password Dimenticata?</a>
             </div>
             <div id="no" class="campi" style="display: none;">
                 <div class='errore'>Nessun utente presente nel sistema con il nome utente inserito</div>

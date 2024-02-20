@@ -277,7 +277,7 @@ public class GestioneQuestionari {
                     + " LEFT OUTER JOIN domande ON risposte.id_domanda=domande.id "
                     + " LEFT OUTER JOIN sezioni ON domande.id_sezione=sezioni.id "
                     + " WHERE "+query_input+" "
-                    + " AND risposte.stato='1' ORDER BY sezioni.nr ASC ";  
+                    + " AND risposte.stato='1' ORDER BY sezioni.nr ASC,domande.nr ASC ";  
             System.out.println("query->"+query);
             conn=DBConnection.getConnection();            
             stmt=conn.prepareStatement(query);
@@ -427,11 +427,17 @@ public class GestioneQuestionari {
         return Utility.getIstanza().query("UPDATE questionari SET "+campo_da_modificare+"="+Utility.is_null(new_valore)+" WHERE id="+id_questionario);
     }
     
-    public String nuova_domanda(String id_questionario,String id_sezione){
-        double nr=Utility.getIstanza().query_select_double("SELECT MAX(nr)+1 as nr FROM domande WHERE id_sezione='"+id_sezione+"' AND id_questionario='"+id_questionario+"' AND stato='1'", "nr");
+    public String nuova_domanda(String id_questionario,String id_sezione,String visibile_id){
+        double nr=0;
+        if(!visibile_id.equals(""))
+            nr=Utility.getIstanza().getValoreByCampoDouble("domande", "nr", "id="+visibile_id)+0.01;
+        else
+            Utility.getIstanza().query_select_double("SELECT MAX(nr)+1 as nr FROM domande WHERE id_sezione='"+id_sezione+"' AND id_questionario='"+id_questionario+"' AND stato='1'", "nr");
         if(nr==0)
             nr=1;
-        return Utility.getIstanza().query_insert("INSERT INTO domande(id_questionario,id_sezione,nr,tipo,stato)VALUES("+Utility.is_null(id_questionario)+","+Utility.is_null(id_sezione)+","+nr+","+Utility.is_null(Domanda.tipo_TESTO)+",'1')");
+        return Utility.getIstanza().query_insert("INSERT INTO domande(id_questionario,id_sezione,visibile_id,nr,tipo,stato) "
+                + "VALUES "
+                + "("+Utility.is_null(id_questionario)+","+Utility.is_null(id_sezione)+","+Utility.is_null(visibile_id)+","+nr+","+Utility.is_null(Domanda.tipo_TESTO)+",'1')");
     }
     
     public String modifica_domanda(String id_domanda,String campo_da_modificare, String new_valore){
@@ -475,6 +481,8 @@ public class GestioneQuestionari {
         Utility.getIstanza().query("UPDATE questionari_utenti SET "+campo_da_modificare+"="+Utility.is_null(new_valore)+" WHERE id="+id_questionario_utente);
         if(campo_da_modificare.equals("stato") && new_valore.equals("1"))
             Utility.getIstanza().query("UPDATE questionari_utenti SET data_ora_invio=NOW() WHERE id="+id_questionario_utente);
+        if(campo_da_modificare.equals("stato") && new_valore.equals("b"))
+            Utility.getIstanza().query("UPDATE questionari_utenti SET data_ora_invio=null WHERE id="+id_questionario_utente);
         if(campo_da_modificare.equals("valutazione") && new_valore.equals("0"))
             Utility.getIstanza().query("UPDATE questionari_utenti SET data_ora_valutazione=null WHERE id="+id_questionario_utente);
         return "";
@@ -492,8 +500,8 @@ public class GestioneQuestionari {
         return "";
     }
     
-    public Map<String,Integer> mappa_valutazioni_sezioni(String id_questionario_utente){
-        Map<String,Integer> toReturn=new HashMap<String,Integer>();
+    public Map<String,Double> mappa_valutazioni_sezioni(String id_questionario_utente){
+        Map<String,Double> toReturn=new HashMap<String,Double>();
         String query=" SELECT id_sezione,SUM(valutazione*peso) AS tot_sez FROM  risposte LEFT OUTER JOIN domande ON risposte.id_domanda=domande.id WHERE id_questionario_utente="+Utility.is_null(id_questionario_utente)+" GROUP BY domande.id_sezione";
         Connection conn=null;
         PreparedStatement stmt=null;
@@ -506,13 +514,81 @@ public class GestioneQuestionari {
             rs=stmt.executeQuery(query);
             System.out.println("query->"+query);
             while(rs.next()){
-                toReturn.put(rs.getString("id_sezione"), rs.getInt("tot_sez"));
+                toReturn.put(rs.getString("id_sezione"), rs.getDouble("tot_sez"));
             }                   
 
         } catch (ConnectionPoolException ex) {
             GestioneErrori.errore("GestioneUtenti", "mappa_valutazioni_sezioni", ex);
         } catch (SQLException ex) {
             GestioneErrori.errore("GestioneUtenti", "mappa_valutazioni_sezioni", ex);
+        } finally {
+                DBUtility.closeQuietly(rs);
+                DBUtility.closeQuietly(stmt);
+                DBConnection.releaseConnection(conn);   
+        }                    
+        
+        
+        return toReturn;
+    }
+    
+    public Map<String,Double> mappa_valutazioni_massime_sezioni(String id_questionario_utente){
+        Map<String,Double> toReturn=new HashMap<String,Double>();
+        String query=" SELECT id_sezione,SUM(10*peso) AS tot_sez FROM  risposte LEFT OUTER JOIN domande ON risposte.id_domanda=domande.id WHERE id_questionario_utente="+Utility.is_null(id_questionario_utente)+" GROUP BY domande.id_sezione";
+        Connection conn=null;
+        PreparedStatement stmt=null;
+        ResultSet rs=null;
+        
+        try{            
+        
+            conn=DBConnection.getConnection();            
+            stmt=conn.prepareStatement(query);
+            rs=stmt.executeQuery(query);
+            System.out.println("query->"+query);
+            while(rs.next()){
+                toReturn.put(rs.getString("id_sezione"), rs.getDouble("tot_sez"));
+            }                   
+
+        } catch (ConnectionPoolException ex) {
+            GestioneErrori.errore("GestioneUtenti", "mappa_valutazioni_massime_sezioni", ex);
+        } catch (SQLException ex) {
+            GestioneErrori.errore("GestioneUtenti", "mappa_valutazioni_massime_sezioni", ex);
+        } finally {
+                DBUtility.closeQuietly(rs);
+                DBUtility.closeQuietly(stmt);
+                DBConnection.releaseConnection(conn);   
+        }                    
+        
+        
+        return toReturn;
+    }
+    
+      public Map<String,Double> mappa_valutazioni_massime_questionari_utenti(String id_questionario){
+        Map<String,Double> toReturn=new HashMap<String,Double>();
+        String query=" SELECT id_utente, SUM(10*peso) AS valutazione_massima " +
+                "FROM risposte " +
+                "LEFT OUTER " +
+                "JOIN domande ON risposte.id_domanda=domande.id " +
+                "LEFT OUTER " +
+                "JOIN questionari_utenti ON risposte.id_questionario_utente=questionari_utenti.id " +
+                "WHERE questionari_utenti.id_questionario='"+id_questionario+"' GROUP BY questionari_utenti.id_utente";
+        Connection conn=null;
+        PreparedStatement stmt=null;
+        ResultSet rs=null;
+        
+        try{            
+        
+            conn=DBConnection.getConnection();            
+            stmt=conn.prepareStatement(query);
+            rs=stmt.executeQuery(query);
+            System.out.println("query->"+query);
+            while(rs.next()){
+                toReturn.put(rs.getString("id_utente"), rs.getDouble("valutazione_massima"));
+            }                   
+
+        } catch (ConnectionPoolException ex) {
+            GestioneErrori.errore("GestioneUtenti", "mappa_valutazioni_massime_questionari_utenti", ex);
+        } catch (SQLException ex) {
+            GestioneErrori.errore("GestioneUtenti", "mappa_valutazioni_massime_questionari_utenti", ex);
         } finally {
                 DBUtility.closeQuietly(rs);
                 DBUtility.closeQuietly(stmt);

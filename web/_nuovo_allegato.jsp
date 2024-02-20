@@ -8,7 +8,7 @@
 <script type='text/javascript'>
     
       $(function () {
-        $("#fileupload_<%=rif%>").fileupload({   
+        $("#fileupload_<%=rif%>_<%=idrif%>").fileupload({   
             done: function (e, data) {
                 $.each(data.files, function (index, file) {
                     var nomefile=data.result;                                            
@@ -17,12 +17,8 @@
                         url: "<%=Utility.url%>/__nuovo_allegato.jsp",
                         data: "idrif=<%=idrif%>&rif=<%=rif%>&url="+encodeURIComponent(String(nomefile)),
                         dataType: "html",
-                        success: function(msg){
-                            <%if(rif.contains("IMMAGINE")){%>
-                                location.reload();
-                            <%}else{%>
-                                aggiorna_allegati();
-                            <%}%>
+                        success: function(msg){                            
+                            location.reload();
                         },
                         error: function(){
                             alert("IMPOSSIBILE EFFETTUARE L'OPERAZIONE fileupload");
@@ -40,14 +36,14 @@
         }); 
     });
     
-    function uploadclick_<%=rif%>(){
-        document.getElementById('fileupload_<%=rif%>').click();
+    function uploadclick_<%=rif%>_<%=idrif%>(){
+        document.getElementById('fileupload_<%=rif%>_<%=idrif%>').click();
     }
 </script>
     
-<input id="fileupload_<%=rif%>" style='display:none' type="file" name="files[]" data-url="<%=Utility.url%>/__upload.jsp" multiple >
+<input id="fileupload_<%=rif%>_<%=idrif%>" style='display:none' type="file" name="files[]" data-url="<%=Utility.url%>/__upload.jsp" multiple >
 
-<button class='pulsante float-right' onclick="uploadclick_<%=rif%>();">       
+<button class='pulsante_tabella float-right' onclick="uploadclick_<%=rif%>_<%=idrif%>();">       
     <img src="<%=Utility.url%>/images/add.png">
     <%if(rif.toUpperCase().
             contains("IMMAGINE")){%>

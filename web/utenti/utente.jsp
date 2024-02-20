@@ -48,9 +48,9 @@
             
             <h1>                                                     
                 <%=utente.getRagione_sociale()%>
-                
-                <button class="pulsante_tabella float-right" onclick="modifica_utente(<%=id_utente%>,this);" id="stato" value="-1"><img src="<%=Utility.img_delete%>">Cancella</button>
-               
+                <% if(utente.is_admin()){%>
+                    <button class="pulsante_tabella float-right" onclick="modifica_utente(<%=id_utente%>,this);" id="stato" value="-1"><img src="<%=Utility.img_delete%>">Cancella</button>
+                <%}%>
             </h1>
                 <div class="box">
            
@@ -111,6 +111,16 @@
                             </select>
                         </div>
                         <div class="height-10"></div>
+                        
+                        <h3>Dati Accesso</h3>
+                        <div class='etichetta'>Nome Utente</div>
+                        <div class='valore'>
+                            <span><%=utente.getNome_utente()%></span>
+                        </div>
+                        <div class='etichetta'>Password</div>
+                        <div class='valore'>
+                            <input type='text' id='password' onchange="modifica_utente(<%=id_utente%>,this);" value="<%=utente.getPassword()%>">
+                        </div>
                 </div>
         </div>                                
     </body>

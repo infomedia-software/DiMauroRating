@@ -58,14 +58,20 @@
                 alert("Verifica di aver compilato i seguenti campi:\n"+errore);
                 return;
             }
-                mostra_loader("Accesso in corso");
+                mostra_loader("Operazione in corso");
                 $.ajax({
                     type: "POST",
                     url: "<%=Utility.url%>/__registrati.jsp",
                     data: $("#form_registrati").serialize(),
                     dataType: "html",
-                    success: function(msg){                                                        
-                        location.reload();
+                    success: function(msg){ 
+                        if(msg.includes("errore")){
+                            alert(msg);
+                            nascondi_loader();
+                            return;
+                        }else{
+                            location.reload();
+                        }
                     },
                     error: function(){
                         alert("IMPOSSIBILE EFFETTUARE L'OPERAZIONE login");
@@ -159,7 +165,7 @@
                             </select>
                         </div>
                         <div class="height-10"></div>
-                        <button class="pulsante float-right" onclick="registrati()">Registrati</button>
+                        <button class="pulsante float-right" type="button" onclick="registrati()">Registrati</button>
                     </form>
                 </div>
                 <div class="clear"></div>

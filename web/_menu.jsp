@@ -51,7 +51,7 @@
         <%}%>
         
         <button class="float-right" onclick="logout()" style="pointer-events: auto;">Esci</button>
-        <div id="user">
+        <div id="user" style="cursor: pointer;" onclick="location.href='<%=Utility.url%>/utenti/utente.jsp?id_utente=<%=utente.getId()%>'">
             <img src="<%=Utility.url%>/images/man.png">
             Benvenuto <%=utente.getReferente()%>
         </div>

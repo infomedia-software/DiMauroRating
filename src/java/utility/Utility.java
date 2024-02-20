@@ -1047,5 +1047,16 @@ public class Utility {
         return toReturn;
     }
     
+    public static String crea_password(){
+        char[] chars = "abcdefghijklmnopqrstuvwxyz0123456789!".toCharArray();
+        StringBuilder sb = new StringBuilder(20);
+        Random random = new Random();
+        for (int i = 0; i < 8; i++) {
+            char c = chars[random.nextInt(chars.length)];
+            sb.append(c);
+        }
+        String output = sb.toString();
+        return output;
+    }
 
 }

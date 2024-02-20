@@ -11,6 +11,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <% 
 Utente utente=(Utente)session.getAttribute("utente");
+String last_focus=Utility.elimina_null(request.getParameter("last_focus")); 
 String id_questionario_utente=Utility.elimina_null(request.getParameter("id_questionario_utente")); 
 String id_questionario=Utility.elimina_null(request.getParameter("id_questionario")); 
 // se il questionario dell'utente ancora non è presente lo creo in stato bozza (b)
@@ -34,9 +35,19 @@ Map<String,String> mappa_domande_risposte=GestioneQuestionari.getIstanza().mappa
                 var campo_da_modificare=inField.name;
                 var new_valore=encodeURIComponent(String(inField.value));
                 var refresh=inField.getAttribute("refresh");
-                
+                mostra_loader("");
                 if(inField.type=="checkbox"){
                     new_valore=checkbox_selezionate(id_risposta);
+                }
+                if(campo_da_modificare=="valutazione"){
+                    var valutazione=parseFloat(new_valore);
+                    if(valutazione<0 || valutazione>10){
+                        var old_value=inField.getAttribute("old_value");      
+                        alert("Inserire una valutazione da 0 a 10.");
+                        $(inField).val(old_value);
+                        nascondi_loader();
+                        return;
+                    }
                 }
                 
                 $.ajax({
@@ -56,23 +67,29 @@ Map<String,String> mappa_domande_risposte=GestioneQuestionari.getIstanza().mappa
             function modifica_questionario_utente(id_questionario_utente,inField){
                 var campo_da_modificare=inField.name;
                 var new_valore=encodeURIComponent(String(inField.value));
-                var refresh=inField.getAttribute("refresh");
-                if(campo_da_modificare=="stato"){
+                var refresh=inField.getAttribute("refresh");      
+                
+                var last_focus=$("#last_focus").val();
+                if(campo_da_modificare=="stato" && new_valore=="1"){
                     if(!confirm("Sei sicuro di voler inviare il questionario?\nNB:non potrà essere più modificato."))
+                        return;
+                }
+                if(campo_da_modificare=="stato" && new_valore=="b"){
+                    if(!confirm("Sei sicuro di voler trasformare il questionario in bozza?\nNB:potrai apportare modifiche al questionario."))
                         return;
                 }
                 if(campo_da_modificare=="valutazione" && new_valore=="0"){
                     if(!confirm("Sei sicuro di voler modificare le valutazioni del questionario?"))
                         return;
                 }
-                
+                mostra_loader("");
                 $.ajax({
                     type: "POST",
                     url: "<%=Utility.url%>/questionari/__modifica_questionario_utente.jsp?id_questionario_utente="+id_questionario_utente+"&campo_da_modificare="+campo_da_modificare+"&new_valore="+new_valore,
                     data: "",
                     dataType: "html",
                     success: function(msg){
-                        location.reload();
+                        location.href='<%=Utility.url%>/questionari/questionario_utente.jsp?id_questionario_utente=<%=id_questionario_utente%>&id_questionario=<%=id_questionario%>&last_focus='+last_focus;
                     },
                     error: function(){
                         alert("IMPOSSIBILE EFFETTUARE L'OPERAZIONE");
@@ -81,11 +98,40 @@ Map<String,String> mappa_domande_risposte=GestioneQuestionari.getIstanza().mappa
             }
             
             function aggiorna_questionario_utente(){
-                $("#div_qu").load("<%=Utility.url%>/questionari/questionario_utente.jsp?id_questionario_utente=<%=id_questionario_utente%>&id_questionario=<%=id_questionario%> #div_qu_inner",function(){
+               /* $("#div_qu").load("<%=Utility.url%>/questionari/questionario_utente.jsp?id_questionario_utente=<%=id_questionario_utente%>&id_questionario=<%=id_questionario%> #div_qu_inner",function(){
                     var last_focus=$("#last_focus").val();
                     $("#"+last_focus).select().focus();             
-                });
+                     
+                });*/
+                var last_focus=$("#last_focus").val();
+                location.href='<%=Utility.url%>/questionari/questionario_utente.jsp?id_questionario_utente=<%=id_questionario_utente%>&id_questionario=<%=id_questionario%>&last_focus='+last_focus;
             }
+        
+            function modifica_allegato(inField,id_allegato){
+                var new_valore=inField.value;
+                var campo_da_modificare=inField.id;
+                if(campo_da_modificare==='stato'){
+                    if(confirm("Procedere alla cancellazione dell'allegato?")===false){            
+                        return;
+                    }
+                }
+                var query="UPDATE allegati SET "+campo_da_modificare+"='"+encodeURIComponent(String(new_valore))+"' WHERE id="+id_allegato;
+                if(campo_da_modificare==='stato')
+                    mostra_loader("Operazione in corso...");
+                $.ajax({
+                    type: "POST",
+                    url: "<%=Utility.url%>/__query.jsp",
+                    data: "query="+query,
+                    dataType: "html",
+                    success: function(msg){
+                        if(campo_da_modificare==='stato')
+                            aggiorna_allegati();
+                    },
+                    error: function(){
+                        alert("IMPOSSIBILE EFFETTUARE L'OPERAZIONE modifica_allegato()");
+                    }
+                });           
+            }    
             
             function checkbox_selezionate(id_risposta){
         	var checkedValues = $('.checkbox_'+id_risposta+':checked').map(function() {return this.value;}).get().toString();
@@ -99,7 +145,7 @@ Map<String,String> mappa_domande_risposte=GestioneQuestionari.getIstanza().mappa
                     data: "",
                     dataType: "html",
                     success: function(msg){
-                        location.reload();
+                        location.href='<%=Utility.url%>/questionari/questionario_utente.jsp?id_questionario_utente=<%=id_questionario_utente%>&id_questionario=<%=id_questionario%>&last_focus='+last_focus;
                     },
                     error: function(){
                         alert("IMPOSSIBILE EFFETTUARE L'OPERAZIONE");
@@ -108,10 +154,33 @@ Map<String,String> mappa_domande_risposte=GestioneQuestionari.getIstanza().mappa
                 
             }
             
+            function controlla_risposte(id_questionario_utente,inField) {
+                var errore="";
+                $('input[name="risposta"], select[name="risposta"]').each(function() {
+                    var type = $(this).prop('type');
+                    var classe = $(this).attr('class');
+                    if ( ($(this).is(":visible") && type!='checkbox') || classe=="risposta" ) {
+                        var valore=$(this).val();
+                        if(valore==""){
+                            errore=errore+"<br>- "+$(this).attr('domanda');
+                        }
+                    }
+                });
+                if(errore==""){
+                    modifica_questionario_utente('<%=id_questionario_utente%>',inField);
+                }else{
+                    errore="Verifica di aver compilato correttamente le seguenti domande:<br>"+errore;
+                    $("#errore").html(errore);
+                    $("#errore").show();
+                }
+                return toReturn;
+            }
+            
             $(function(){
                 $( document ).on( "focusin", "input, select", function() {
                     $("#last_focus").val(this.id);
                 });
+                $("#<%=last_focus%>").focus();
             })
         </script>
     </head>
@@ -127,35 +196,50 @@ Map<String,String> mappa_domande_risposte=GestioneQuestionari.getIstanza().mappa
                 <%}%>
                 <% if(qu.getData_ora_invio()!=null){%>
                     <div class="tag color_green float-right">Inviato il <%=qu.getData_ora_invio_it()%></div>
+                    <% if(utente.is_admin()){%>
+                        <button class="pulsante_tabella color_orange float-right" value="b" name="stato" onclick="modifica_questionario_utente('<%=id_questionario_utente%>',this)">Passa in Bozza</button>
+                    <%}%>
                 <%}%>
                 <% if(qu.is_bozza()){%>
                     <div class="tag color_rifiutata float-right">BOZZA</div>
                 <%}%>
             </h1>
             <% if(qu.getData_ora_valutazione()!=null){
-                Map<String,Integer> mappa_valutazioni=GestioneQuestionari.getIstanza().mappa_valutazioni_sezioni(id_questionario_utente);
-                //System.out.println(mappa_valutazioni.toString());
+                Map<String,Double> mappa_valutazioni=GestioneQuestionari.getIstanza().mappa_valutazioni_sezioni(id_questionario_utente);
+                Map<String,Double> mappa_valutazioni_massime_sezioni=GestioneQuestionari.getIstanza().mappa_valutazioni_massime_sezioni(id_questionario_utente);
+                Map<String,Double> mappa_valutazioni_massime_questionari_utenti=GestioneQuestionari.getIstanza().mappa_valutazioni_massime_questionari_utenti(id_questionario);
+                //System.out.println(mappa_valutazioni_massime_questionari_utenti.toString());
+                
             %>
                 <div class="box">
                     <b>Valutazione Questionario</b>
                     <table class="tabella">
                         <tr>
-                            <%for(Sezione s:GestioneSezioni.getIstanza().ricerca("")){%>
+                            <%for(Sezione s:GestioneSezioni.getIstanza().ricerca("id_questionario="+id_questionario)){%>
                                 <th style="text-align: center;"><%=s.getTesto_ita()%></th>
                             <%}%>
                             <th>Tot. Questionario</th>
                         </tr>
                         <tr>
-                            <%for(Sezione s:GestioneSezioni.getIstanza().ricerca("")){%>
+                            <%for(Sezione s:GestioneSezioni.getIstanza().ricerca(" id_questionario="+id_questionario)){%>
                                 <td style="text-align: center;">
                                     <% if(mappa_valutazioni.get(s.getId())!=null){%>
-                                        <%=mappa_valutazioni.get(s.getId())%>
+                                        <%=Utility.elimina_zero(mappa_valutazioni.get(s.getId()))%>/<%=Utility.elimina_zero(mappa_valutazioni_massime_sezioni.get(s.getId()))%>
+                                        <br>
+                                        <h5><%=Utility.elimina_zero(Utility.arrotonda_double(mappa_valutazioni.get(s.getId())*100/mappa_valutazioni_massime_sezioni.get(s.getId()),2))%>%</h5>
                                     <%}else{%>
                                         0
                                     <%}%>
                                 </td>
                             <%}%>
-                            <td style="text-align: center;"><b><%=Utility.elimina_zero(qu.getValutazione())%></b></td>
+                            <td style="text-align: center;">
+                                <% if(mappa_valutazioni_massime_questionari_utenti.get(qu.getUtente().getId())!=null){%>
+                                    <b><%=Utility.elimina_zero(qu.getValutazione())%>/<%=Utility.elimina_zero(mappa_valutazioni_massime_questionari_utenti.get(qu.getUtente().getId()))%></b>
+                                    <h4><%=Utility.elimina_zero(Utility.arrotonda_double(qu.getValutazione()*100/mappa_valutazioni_massime_questionari_utenti.get(qu.getUtente().getId()),2))%>%</h4>
+                                <%}else{%>
+                                    0
+                                <%}%>
+                            </td>
                         </tr>
                     </table>
                     <% if(qu.getData_ora_invio()!=null && qu.getData_ora_valutazione()!=null && utente.is_admin()){%>
@@ -166,16 +250,17 @@ Map<String,String> mappa_domande_risposte=GestioneQuestionari.getIstanza().mappa
                 </div>
                 <div class="height-10"></div>
             <%}%>
-            <input type='hidden' id='last_focus' readonly="true" tabindex="-1">
+            <input type='hidden' id='last_focus' readonly="true" tabindex="-1" value="<%=last_focus%>">
             <div id="div_qu">
                 <div id="div_qu_inner">
                     <table class="tabella">
                         <tr>
-                            <th style="width: 100px;">Sezione</th>
+                            <th style="width: 100px;"><% if(utente.is_italiano()){%>Sezione<%}else{%>Section<%}%></th>
                             <th style="width: 100px;">Nr.</th>
-                            <th>Domanda</th>
-                            <th>Risposta</th>
+                            <th><% if(utente.is_italiano()){%>Domanda<%}else{%>Question<%}%></th>
+                            <th><% if(utente.is_italiano()){%>Risposta<%}else{%>Answer<%}%></th>
                             <%if(utente.is_admin() && qu.getData_ora_invio()!=null){%>
+                                <th style="width: 80px;">Peso</th>
                                 <th style="width: 80px;">Valutazione</th>
                             <%}%>
                         </tr>
@@ -183,13 +268,14 @@ Map<String,String> mappa_domande_risposte=GestioneQuestionari.getIstanza().mappa
                             <% if(r.getDomanda().getVisibile_id().equals("") || mappa_domande_risposte.get(r.getDomanda().getVisibile_id()).equals(r.getDomanda().getVisibile_condizione())){%>
                             <tr>
                                 <td>
+                                    <%=r.getDomanda().getSezione().getNr()%>
                                     <% if(utente.is_italiano()){%>
                                         <%=r.getDomanda().getSezione().getTesto_ita()%>
                                     <%}else{%>
                                         <%=r.getDomanda().getSezione().getTesto_eng()%>
                                     <%}%>
                                 </td>
-                                <td><%=r.getDomanda().getSezione().getNr()%></td>
+                                <td title="<%=r.getId()%>"><% if(r.getDomanda().getVisibile_id().equals("")){%><%=r.getDomanda().getSezione().getNr()%>.<%=r.getDomanda().getNr()%><%}%></td>
                                 <td>
                                     <% if(utente.is_italiano()){%>
                                         <%=r.getDomanda().getTesto_ita()%>
@@ -197,14 +283,15 @@ Map<String,String> mappa_domande_risposte=GestioneQuestionari.getIstanza().mappa
                                         <%=r.getDomanda().getTesto_eng()%>
                                     <%}%>
                                 </td>
-                                <td <% if(!utente.getId().equals(qu.getUtente().getId()) || qu.getData_ora_invio()!=null){%> style="pointer-events: none;" <%}%>>
+                                <td id="risposta_<%=r.getId()%>" <% if((!utente.getId().equals(qu.getUtente().getId()) && !utente.is_admin()) || qu.getData_ora_invio()!=null){%> style="pointer-events: none;" <%}%>>
                                     <% if(r.getDomanda().is_testo()){%>
-                                        <input type="text" id="<%=r.getId()%>" name="risposta" onchange="modifica_risposta('<%=r.getId()%>',this)" value="<%=r.getRisposta()%>">
+                                        <input type="text" domanda="<% if(utente.is_italiano()){%><%=r.getDomanda().getTesto_ita()%><%}else{%><%=r.getDomanda().getTesto_ita()%><%}%>" id="<%=r.getId()%>" name="risposta" onchange="modifica_risposta('<%=r.getId()%>',this)" value="<%=r.getRisposta()%>">
                                     <%}%>
                                     <% if(r.getDomanda().is_numero()){%>
-                                        <input type="number" id="<%=r.getId()%>" name="risposta" onchange="modifica_risposta('<%=r.getId()%>',this)" value="<%=r.getRisposta()%>">
+                                        <input type="number" domanda="<% if(utente.is_italiano()){%><%=r.getDomanda().getTesto_ita()%><%}else{%><%=r.getDomanda().getTesto_ita()%><%}%>" id="<%=r.getId()%>" name="risposta" onchange="modifica_risposta('<%=r.getId()%>',this)" value="<%=r.getRisposta()%>">
                                     <%}%>
                                     <% if(r.getDomanda().is_checkbox()){%>
+                                        <input type="text" domanda="<% if(utente.is_italiano()){%><%=r.getDomanda().getTesto_ita()%><%}else{%><%=r.getDomanda().getTesto_ita()%><%}%>" id="<%=r.getId()%>" class="risposta" id="<%=r.getId()%>" name="risposta" value="<%=r.getRisposta()%>">
                                     <% String valori[]=r.getDomanda().getValori().split(",");
                                         for(String v:valori){%>
                                             <%=v%> <input type="checkbox" id="<%=r.getId()%>" name="risposta" class="checkbox_<%=r.getId()%>" onchange="modifica_risposta('<%=r.getId()%>',this)" value="<%=v%>" <% if(r.getRisposta().contains(v)){%> checked="true"<%}%>>
@@ -212,42 +299,54 @@ Map<String,String> mappa_domande_risposte=GestioneQuestionari.getIstanza().mappa
                                     <%}%>
                                     <% if(r.getDomanda().is_select()){%>
                                         <% String valori[]=r.getDomanda().getValori().split(",");%>
-                                        <select name="risposta" id="<%=r.getId()%>" onchange="modifica_risposta('<%=r.getId()%>',this)">
+                                        <select name="risposta" domanda="<% if(utente.is_italiano()){%><%=r.getDomanda().getTesto_ita()%><%}else{%><%=r.getDomanda().getTesto_ita()%><%}%>" id="<%=r.getId()%>" onchange="modifica_risposta('<%=r.getId()%>',this)">
                                             <option value="">Seleziona la risposta</option>
                                             <%for(String v:valori){%>
                                                 <option value="<%=v%>" <% if(r.getRisposta().equals(v)){%>selected="true"<%}%>><%=v%></option>
                                             <%}%>
                                         </select>
                                     <%}%>
+                                    <% if(r.getDomanda().is_si_no()){%>
+                                        
+                                        <select name="risposta" domanda="<% if(utente.is_italiano()){%><%=r.getDomanda().getTesto_ita()%><%}else{%><%=r.getDomanda().getTesto_ita()%><%}%>" id="<%=r.getId()%>" onchange="modifica_risposta('<%=r.getId()%>',this)">
+                                            <option value="">Seleziona la risposta</option>
+                                            <option value="si" <% if(r.getRisposta().equals("si")){%>selected="true"<%}%>>si</option>
+                                            <option value="no" <% if(r.getRisposta().equals("no")){%>selected="true"<%}%>>no</option>
+                                        </select>
+                                    <%}%>
                                     <% if(r.getDomanda().is_allegato()){%>
                                     
                                               <%
-                                            String queryallegati=" allegati.rif='QUESTIONARIO_UTENTE' AND allegati.idrif="+Utility.is_null(id_questionario_utente)+" AND allegati.stato='1' ORDER BY allegati.id DESC";
+                                            String queryallegati=" allegati.rif='QUESTIONARIO_UTENTE' AND allegati.idrif="+Utility.is_null(r.getId())+" AND allegati.stato='1' ORDER BY allegati.id DESC";
                                             %>
                                             <jsp:include page="../_allegati.jsp">
                                                 <jsp:param name="query" value="<%=queryallegati%>"></jsp:param>
+                                                <jsp:param name="id_risposta" value="<%=r.getId()%>"></jsp:param>
                                             </jsp:include>
-
+                                        <% if(qu.getData_ora_invio()==null){%>
                                             <div class="height-10"></div>
                                             <jsp:include page="../_nuovo_allegato.jsp">
-                                                <jsp:param name="idrif" value="<%=id_questionario_utente%>"></jsp:param>
+                                                <jsp:param name="idrif" value="<%=r.getId()%>"></jsp:param>
                                                 <jsp:param name="rif" value="QUESTIONARIO_UTENTE"></jsp:param>
                                             </jsp:include>
-                                            
+                                        <%}%>    
                                     <%}%>
                                 </td>
                                 <%if(utente.is_admin() && qu.getData_ora_invio()!=null){%>
                                     <td style="text-align: right;">
-                                        <input style="text-align: right;" type="number" id="<%=r.getId()%>" name="valutazione" onchange="modifica_risposta('<%=r.getId()%>',this)" value="<%=Utility.elimina_zero(r.getValutazione())%>">
+                                        <%=Utility.elimina_zero(r.getDomanda().getPeso())%>
+                                    </td>
+                                    <td style="text-align: right;">
+                                        <input style="text-align: right;<% if(qu.getData_ora_valutazione()!=null){%> pointer-events: none;<%}%>" type="number" id="<%=r.getId()%>"  name="valutazione" min="0" max="10" onchange="modifica_risposta('<%=r.getId()%>',this)" value="<%=Utility.elimina_zero(r.getValutazione())%>" old_value="<%=Utility.elimina_zero(r.getValutazione())%>">
                                     </td>
                                 <%}%>
                             </tr>
                             <%}%>
                         <%}%>
                     </table>
-                    
-                    <% if(qu.getData_ora_invio()==null && !utente.is_admin()){%>
-                        <button class="pulsante float-right" name="stato" value="1" onclick="modifica_questionario_utente('<%=id_questionario_utente%>',this)" >Invia Questionario</button>
+                    <div class="box" id="errore" style="display: none;border:1px solid red;"></div>
+                    <% if(qu.getData_ora_invio()==null){%>
+                        <button class="pulsante float-right" name="stato" value="1" onclick="controlla_risposte('<%=id_questionario_utente%>',this);" >Invia Questionario</button>
                     <%}%>
                     <% if(qu.getData_ora_invio()!=null && qu.getData_ora_valutazione()==null && utente.is_admin()){%>
                         <button class="pulsante float-right"  onclick="salva_valutazione('<%=id_questionario_utente%>',this)" >Salva Valutazione</button>
