@@ -70,6 +70,7 @@
                             nascondi_loader();
                             return;
                         }else{
+                            alert("Registrazione completata.\nRiceverai la password di accesso al seguente indirizzo email: "+email+"");
                             location.reload();
                         }
                     },

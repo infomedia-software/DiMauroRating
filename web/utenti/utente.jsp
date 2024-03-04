@@ -48,7 +48,7 @@
             
             <h1>                                                     
                 <%=utente.getRagione_sociale()%>
-                <% if(utente.is_admin()){%>
+               <% if(utente_sessione.is_admin()){%>
                     <button class="pulsante_tabella float-right" onclick="modifica_utente(<%=id_utente%>,this);" id="stato" value="-1"><img src="<%=Utility.img_delete%>">Cancella</button>
                 <%}%>
             </h1>
