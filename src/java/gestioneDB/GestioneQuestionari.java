@@ -432,7 +432,7 @@ public class GestioneQuestionari {
         if(!visibile_id.equals(""))
             nr=Utility.getIstanza().getValoreByCampoDouble("domande", "nr", "id="+visibile_id)+0.01;
         else
-            nr=Utility.getIstanza().query_select_double("SELECT MAX(nr)+1 as nr FROM domande WHERE id_sezione='"+id_sezione+"' AND id_questionario='"+id_questionario+"' AND stato='1'", "nr");
+            nr=Utility.getIstanza().query_select_double("SELECT MAX(FLOOR(nr))+1 as nr FROM domande WHERE id_sezione='"+id_sezione+"' AND id_questionario='"+id_questionario+"' AND stato='1'", "nr");
         if(nr==0)
             nr=1;
         return Utility.getIstanza().query_insert("INSERT INTO domande(id_questionario,id_sezione,visibile_id,nr,tipo,stato) "

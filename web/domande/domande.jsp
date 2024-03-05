@@ -65,6 +65,19 @@
                 var campo_da_modificare=inField.id;
                 var new_valore=encodeURIComponent(String(inField.value));
                 var refresh=inField.getAttribute("refresh");
+                if(campo_da_modificare=="nr"){
+                    if(new_valore==""){
+                        alert("Inserire un valore numerico");
+                        return;
+                    }
+                    new_valore=parseFloat(new_valore);
+                    
+                    if(new_valore<=0){
+                        alert("Non puoi inserire un valore minore o uguale a 0");
+                        return;
+                    }
+                    
+                }
                 
                 if(inField.type=="checkbox"){
                     if(inField.checked) 
@@ -123,7 +136,7 @@
                 <%int i=1; for(Domanda d:domande){ %>
                 <div class="box">
                     <% if(d.getVisibile_id().equals("")){%>
-                        <h5>Domanda <%=d.getSezione().getTesto_ita()%> <%=d.getSezione().getNr()%>.<%=d.getNr()%></h5>
+                        <h5>Domanda <%=d.getSezione().getTesto_ita()%> <%=d.getSezione().getNr()%>.<input type="number" style="width: 50px;" placeholder="Nr." refresh="si" value="<%=d.getNr()%>" onchange="modifica_domanda('<%=d.getId()%>',this)" id="nr"></h5>
                     <%}%>
                     <div class="width-50 float-left">
                         <!--div class="etichetta">Sezione</div>
@@ -135,12 +148,7 @@
                             </select>
                         </div-->
                     </div>
-                    <div class="width-50 float-left">
-                        <!--div class="etichetta">Nr.</div>
-                        <div class="valore">
-                            <input type="text" placeholder="Nr." refresh="si" value="<%=d.getNr()%>" onchange="modifica_domanda('<%=d.getId()%>',this)" id="nr">
-                        </div-->
-                    </div>
+                    
                     <div class="clear"></div>
                     <div class="width-50 float-left">
                         <div class="etichetta">Domanda in italiano</div>
@@ -197,14 +205,14 @@
                             <%}%>
                     </div>
                     <div class="clear"></div>
-                        <button class="pulsante_tabella float-right" onclick="modifica_domanda('<%=d.getId()%>',this)" id="stato" refresh="si"><img src="<%=Utility.img_delete%>">Cancella</button>
+                        <button class="pulsante_tabella float-right" onclick="modifica_domanda('<%=d.getId()%>',this)" id="stato" refresh="si" value="-1"><img src="<%=Utility.img_delete%>">Cancella</button>
                         <% if(d.getVisibile_id().equals("")){%>
                             <button class="pulsante_tabella color_green float-right" onclick="nuova_domanda_condizione('<%=id_questionario%>','<%=d.getSezione().getId()%>','<%=d.getId()%>')"><img src="<%=Utility.img_add%>">Domanda su condizione</button>
                         <%}%>
                     <div class="clear"></div>
                 </div>
                     <div class="height-10"></div>
-                
+                    
                 <%i++;}%>
                     <button class="pulsante color_green float-right" onclick="mostra_popup('_nuova_domanda.jsp?id_questionario=<%=id_questionario%>');"><img src="<%=Utility.img_add%>">Nuova Domanda</button>
                 </div>
