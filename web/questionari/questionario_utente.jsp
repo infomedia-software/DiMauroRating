@@ -176,6 +176,24 @@ Map<String,String> mappa_domande_risposte=GestioneQuestionari.getIstanza().mappa
                 return toReturn;
             }
             
+            function rigenera_questionario(id_questionario_utente,id_questionario){
+                if(confirm("Sicuro di voler aggiornare il questionario? Tutte le risposte saranno perse.")){
+                    mostra_loader("Aggiornamento in corso");
+                    $.ajax({
+                        type: "POST",
+                        url: "<%=Utility.url%>/questionari/__rigenera_questionario_utente.jsp?id_questionario_utente="+id_questionario_utente+"&id_questionario="+id_questionario,
+                        data: "",
+                        dataType: "html",
+                        success: function(msg){
+                            location.href='<%=Utility.url%>/questionari/questionario_utente.jsp?id_questionario_utente=<%=id_questionario_utente%>&id_questionario=<%=id_questionario%>&last_focus='+last_focus;
+                        },
+                        error: function(){
+                            alert("IMPOSSIBILE EFFETTUARE L'OPERAZIONE");
+                        }
+                    });
+                }
+            }
+            
             $(function(){
                 $( document ).on( "focusin", "input, select", function() {
                     $("#last_focus").val(this.id);
@@ -191,6 +209,9 @@ Map<String,String> mappa_domande_risposte=GestioneQuestionari.getIstanza().mappa
             <h1><%=q.getNr()%> - 
                 <% if(utente.is_italiano()){%> <%=q.getTitolo_ita()%> <%}%> 
                 <% if(utente.is_inglese()){%> <%=q.getTitolo_eng()%> <%}%> 
+                <% if(qu.getData_ora_invio()==null && utente.is_admin()){%>
+                    <button class="pulsante_tabella color_orange float-right" onclick="rigenera_questionario('<%=id_questionario_utente%>','<%=id_questionario%>')">Aggiorna Questionario</button>
+                <%}%>
                 <% if(qu.getData_ora_valutazione()!=null){%>
                     <div class="tag color_green float-right">Valutato il <%=qu.getData_ora_valutazione_it()%></div>
                 <%}%>
