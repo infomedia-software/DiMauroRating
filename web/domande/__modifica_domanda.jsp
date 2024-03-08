@@ -24,11 +24,11 @@
     if(campo_da_modificare.equals("stato") && new_valore.equals("-1")){     // cancellazione
         String visibile_id=Utility.getIstanza().getValoreByCampo("domande", "visibile_id", "id="+id_domanda);
         if(visibile_id.equals(""))   {   // solo se è una domanda principale
-            Utility.getIstanza().query("UPDATE domande SET stato="+Utility.is_null(new_valore)+" WHERE id="+id_domanda+" OR visibile_id="+id_domanda);
             double old_valore=Utility.getIstanza().getValoreByCampoDouble("domande", "nr", "id="+id_domanda);
+            Utility.getIstanza().query("DELETE FROM domande WHERE id="+id_domanda+" OR visibile_id="+id_domanda);
             Utility.getIstanza().query("UPDATE domande SET nr=nr-1 WHERE FLOOR(nr)>"+old_valore);
-        }else{
-            Utility.getIstanza().query("UPDATE domande SET stato="+Utility.is_null(new_valore)+" WHERE id="+id_domanda);
+        }else{            
+            Utility.getIstanza().query("DELETE FROM domande  WHERE id="+id_domanda);
         }
         
     }

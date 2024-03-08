@@ -1,3 +1,4 @@
+<%@page import="beans.Domanda"%>
 <%@page import="gestioneDB.GestioneSezioni"%>
 <%@page import="beans.Sezione"%>
 <%@page import="beans.QuestionarioUtente"%>
@@ -19,10 +20,63 @@ if(!id_questionario.equals("") && id_questionario_utente.equals("null")){
     id_questionario_utente=GestioneQuestionari.getIstanza().nuovo_questionario_utente(id_questionario, utente.getId());
     response.sendRedirect(Utility.url+"/questionari/questionario_utente.jsp?id_questionario_utente="+id_questionario_utente+"&id_questionario="+id_questionario);
 }
+
+String id_domande_questionario=Utility.getIstanza().query_select("SELECT GROUP_CONCAT(id) AS id_domande_questionario FROM domande WHERE id_questionario="+id_questionario, "id_domande_questionario");
+System.out.println("id_domande_questionario->"+id_domande_questionario);
+
+String id_domande_questionario_utente=Utility.getIstanza().query_select("SELECT GROUP_CONCAT(id_domanda) AS id_domande_questionario_utente FROM risposte WHERE id_questionario_utente="+id_questionario_utente, "id_domande_questionario_utente");
+
+id_domande_questionario_utente="_"+id_domande_questionario_utente.replaceAll(",", "__")+"_";
+System.out.println("id_domande_questionario->"+id_domande_questionario);
+System.out.println("id_domande_questionario_utente->"+id_domande_questionario_utente);
+
+String id_da_inserire="";
+String t1[]=id_domande_questionario.split(",");
+for(String s:t1){
+    if(!id_domande_questionario_utente.contains("_"+s+"_")){
+        id_da_inserire=s+","+id_da_inserire;
+    }
+}
+id_da_inserire=Utility.rimuovi_ultima_occorrenza(id_da_inserire, ",");
+System.out.println("id_da_inserire="+id_da_inserire);
+
+id_domande_questionario="_"+id_domande_questionario.replaceAll(",", "__")+"_";
+String id_da_rimuovere="";
+id_domande_questionario_utente=id_domande_questionario_utente.replaceAll("__",",").replaceAll("_", "");
+String t2[]=id_domande_questionario_utente.split(",");
+for(String s:t2){
+    if(!id_domande_questionario.contains("_"+s+"_")){
+        id_da_rimuovere=s+","+id_da_rimuovere;
+    }
+}
+id_da_rimuovere=Utility.rimuovi_ultima_occorrenza(id_da_rimuovere, ",");
+System.out.println("id_da_rimuovere="+id_da_rimuovere);
+
+/*** INSERISCO LE DOMANDE CHE MANCANO ***/
+if(!id_da_inserire.equals("")){
+    ArrayList<Domanda> domande=GestioneQuestionari.getIstanza().ricerca_domande(" domande.id IN ("+id_da_inserire+")");
+    if(domande.size()>0){
+        String query_risposte="INSERT INTO risposte(id_questionario_utente,id_domanda,stato) VALUES ";
+        for(Domanda d:domande){
+            query_risposte=query_risposte+"("+Utility.is_null(id_questionario_utente)+","+Utility.is_null(d.getId())+",'1'),";
+        }
+        query_risposte=Utility.rimuovi_ultima_occorrenza(query_risposte, ",");
+        Utility.getIstanza().query_insert(query_risposte);
+    }
+}
+/** CANCELLO LE DOMANDE IN PIU ***/
+if(!id_da_rimuovere.equals("")){
+    Utility.getIstanza().query("DELETE FROM risposte WHERE id_domanda IN ("+id_da_rimuovere+") ");
+}
+
+
+
 Questionario q=GestioneQuestionari.getIstanza().get_questionario(id_questionario);
 QuestionarioUtente qu=GestioneQuestionari.getIstanza().get_questionario_utente(id_questionario_utente);
 ArrayList<Risposta> risposte=GestioneQuestionari.getIstanza().ricerca_risposte(" risposte.id_questionario_utente="+id_questionario_utente);
 Map<String,String> mappa_domande_risposte=GestioneQuestionari.getIstanza().mappa_id_domande_risposte(id_questionario_utente);
+
+
 %>
 <!DOCTYPE html>
 <html>
@@ -210,7 +264,7 @@ Map<String,String> mappa_domande_risposte=GestioneQuestionari.getIstanza().mappa
                 <% if(utente.is_italiano()){%> <%=q.getTitolo_ita()%> <%}%> 
                 <% if(utente.is_inglese()){%> <%=q.getTitolo_eng()%> <%}%> 
                 <% if(qu.getData_ora_invio()==null && utente.is_admin()){%>
-                    <button class="pulsante_tabella color_orange float-right" onclick="rigenera_questionario('<%=id_questionario_utente%>','<%=id_questionario%>')">Aggiorna Questionario</button>
+                    <!-- button class="pulsante_tabella color_orange float-right" onclick="rigenera_questionario('<%=id_questionario_utente%>','<%=id_questionario%>')">Aggiorna Questionario</button-->
                 <%}%>
                 <% if(qu.getData_ora_valutazione()!=null){%>
                     <div class="tag color_green float-right">Valutato il <%=qu.getData_ora_valutazione_it()%></div>
