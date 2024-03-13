@@ -66,17 +66,18 @@
                 var new_valore=encodeURIComponent(String(inField.value));
                 var refresh=inField.getAttribute("refresh");
                 if(campo_da_modificare=="nr"){
-                    if(new_valore==""){
-                        alert("Inserire un valore numerico");
+                    var new_ordinamento=parseInt(new_valore);
+                    var id_sezione=$(inField).attr("id_sezione");
+                    if (!Number.isInteger(parseFloat(new_valore))) {
+                        alert("Il valore inserito non è un numero intero!");
+                        $(inField).val($(inField).attr("old_value"));
                         return;
                     }
-                    new_valore=parseFloat(new_valore);
-                    
-                    if(new_valore<=0){
-                        alert("Non puoi inserire un valore minore o uguale a 0");
+                    if(new_ordinamento<1){
+                        alert("Impossibile inserire un numero minore di 1");
+                        $(inField).val($(inField).attr("old_value"));
                         return;
                     }
-                    
                 }
                 
                 if(inField.type=="checkbox"){
@@ -97,10 +98,15 @@
                 }
                 $.ajax({
                     type: "POST",
-                    url: "__modifica_domanda.jsp?id_domanda="+id_domanda+"&campo_da_modificare="+campo_da_modificare+"&new_valore="+new_valore,
+                    url: "__modifica_domanda.jsp?id_domanda="+id_domanda+"&campo_da_modificare="+campo_da_modificare+"&new_valore="+new_valore+"&id_sezione="+id_sezione,
                     data: "",
                     dataType: "html",
                     success: function(msg){
+                        if(msg.includes("errore")){
+                            alert(msg);
+                            $(inField).val($(inField).attr("old_value"));
+                            return;
+                        }
                         if(refresh=="si")
                             aggiorna_domande();
                     },
@@ -133,21 +139,20 @@
             <div id="div_domande">
                 <div id="div_domande_inner">
                 
-                <%int i=1; for(Domanda d:domande){ %>
-                <div class="box">
-                    <% if(d.getVisibile_id().equals("")){%>
-                        <h5>Domanda <%=d.getSezione().getTesto_ita()%> <%=d.getSezione().getNr()%>.<input type="number" style="width: 50px;" placeholder="Nr." refresh="si" value="<%=d.getNr()%>" onchange="modifica_domanda('<%=d.getId()%>',this)" id="nr"></h5>
+                <% //int max_ordinamento=1; 
+                String id_sezione_corrente="";
+                for(Domanda d:domande){
+                    if(!d.getSezione().getId().equals(id_sezione_corrente) || id_sezione_corrente.equals("")){
+                        id_sezione_corrente=d.getSezione().getId();
+                    %>
+                        <h3>Sezione <%=d.getSezione().getTesto_ita()%></h3>
                     <%}%>
-                    <div class="width-50 float-left">
-                        <!--div class="etichetta">Sezione</div>
-                        <div class="valore">
-                            <select id="id_sezione" onchange="modifica_domanda('<%=d.getId()%>',this)">
-                                <% for(Sezione s:sezioni){%>
-                                    <option value="<%=s.getId()%>" <% if(d.getSezione().getId().equals(s.getId())){%> selected="true" <%}%>><%=s.getNr()%> <%=s.getTesto_ita()%></option>
-                                <%}%>
-                            </select>
-                        </div-->
-                    </div>
+                <div class="box">
+                    
+                    <% if(d.getVisibile_id().equals("")){%>
+                        <h5>Domanda <%=d.getSezione().getTesto_ita()%> <%=d.getSezione().getNr()%>.<input type="number" style="width: 50px;" placeholder="Nr." refresh="si" value="<%=d.getNr()%>" old_value="<%=d.getNr()%>" id_sezione="<%=id_sezione_corrente%>" onchange="modifica_domanda('<%=d.getId()%>',this)" id="nr"></h5>
+                    <%}%>
+                    <div class="width-50 float-left"></div>
                     
                     <div class="clear"></div>
                     <div class="width-50 float-left">
@@ -211,10 +216,9 @@
                         <%}%>
                     <div class="clear"></div>
                 </div>
-                    <div class="height-10"></div>
-                    
-                <%i++;}%>
-                    <button class="pulsante color_green float-right" onclick="mostra_popup('_nuova_domanda.jsp?id_questionario=<%=id_questionario%>');"><img src="<%=Utility.img_add%>">Nuova Domanda</button>
+                <div class="height-10"></div>
+                <%}%>
+                <button class="pulsante color_green float-right" onclick="mostra_popup('_nuova_domanda.jsp?id_questionario=<%=id_questionario%>');"><img src="<%=Utility.img_add%>">Nuova Domanda</button>
                 </div>
             </div>
         </div>
