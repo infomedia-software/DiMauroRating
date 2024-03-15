@@ -666,3 +666,44 @@ h3{
     width: 20px;
     margin: 5px;        
 }
+
+/* Stili per la stampa */
+@media print {
+  .no_print {
+    display: none;
+  }
+  #container{
+      margin-top: 0px;
+      background-color: white;
+  }
+  
+  #menu{
+      display: none;
+  }
+  
+  .pulsante_small,.pulsante_tabella{
+      display: none;
+  }
+  .pulsante,.tag{
+      display: none;
+  }
+  
+  #logo{
+      display: block !important;
+  }
+  
+  input, select{
+      border:1px solid white !important;
+  }
+  
+  select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: none;
+    padding-right: 2em; /* Aggiunge spazio per l'opzione selezionata */
+  }
+  select option:checked::after {
+    content: '\25BC'; /* Unicode per freccia in giù */
+  }
+}

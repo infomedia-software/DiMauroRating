@@ -260,7 +260,7 @@ Map<String,String> mappa_domande_risposte=GestioneQuestionari.getIstanza().mappa
     
         <jsp:include page="../_menu.jsp"></jsp:include>
         <div id='container'>
-            <h1><%=q.getNr()%> - 
+            <h1><%=q.getNr()%> -  
                 <% if(utente.is_italiano()){%> <%=q.getTitolo_ita()%> <%}%> 
                 <% if(utente.is_inglese()){%> <%=q.getTitolo_eng()%> <%}%> 
                 <% if(qu.getData_ora_invio()==null && utente.is_admin()){%>
@@ -278,6 +278,7 @@ Map<String,String> mappa_domande_risposte=GestioneQuestionari.getIstanza().mappa
                 <% if(qu.is_bozza()){%>
                     <div class="tag color_rifiutata float-right">BOZZA</div>
                 <%}%>
+                <button class="pulsante_tabella float-right" onclick="window.print()">Stampa</button>
             </h1>
             <% if(qu.getData_ora_valutazione()!=null){
                 Map<String,Double> mappa_valutazioni=GestioneQuestionari.getIstanza().mappa_valutazioni_sezioni(id_questionario_utente);
