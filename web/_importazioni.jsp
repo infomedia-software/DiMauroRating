@@ -96,5 +96,59 @@
         $("#popup_container").show();        
         popup_visibile=true;
     }
+    
+     function modifica_utente(id_utente,inField){
+        var new_valore=inField.value;
+        var campo_da_modificare=inField.id;
+        var refresh=inField.getAttribute("refresh");
+        if(campo_da_modificare==="stato"){
+            if(confirm("Procedere alla cancellazione dell'utente?")===false){
+                return;
+            }
+        }
+        $.ajax({
+            type: "POST",
+            url: "<%=Utility.url%>/utenti/__modifica_utente.jsp",
+            data: "new_valore="+encodeURIComponent(String(new_valore))+"&campo_da_modificare="+campo_da_modificare+"&id_utente="+id_utente,
+            dataType: "html",
+            success: function(msg){
+                if(campo_da_modificare==="stato"){
+                    location.href='<%=Utility.url%>/utenti/utenti.jsp';
+                }                
+                if(refresh=="si")
+                    aggiorna_utente();
+            },
+            error: function(){
+                alert("IMPOSSIBILE EFFETTUARE L'OPERAZIONE modifica_utente");
+            }
+        });
+    }
+    
+    function modifica_richiesta(id_richiesta,inField){
+        var campo_da_modificare=inField.id;
+        var new_valore=encodeURIComponent(String(inField.value));
+        var refresh=inField.getAttribute("refresh");
+
+        if(inField.type=="checkbox"){
+            if(inField.checked) 
+                new_valore="si"
+            else
+                new_valore="";
+        }
+
+        $.ajax({
+            type: "POST",
+            url: "<%=Utility.url%>/richieste/__modifica_richiesta.jsp?id_richiesta="+id_richiesta+"&campo_da_modificare="+campo_da_modificare+"&new_valore="+new_valore,
+            data: "",
+            dataType: "html",
+            success: function(msg){
+                if(refresh=="si")
+                    location.reload();
+            },
+            error: function(){
+                alert("IMPOSSIBILE EFFETTUARE L'OPERAZIONE");
+            }
+        });
+    }
 </script>
 

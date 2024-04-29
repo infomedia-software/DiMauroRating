@@ -87,7 +87,7 @@ public class GestioneQuestionari {
             String query="SELECT * FROM questionari "
                     + " LEFT OUTER JOIN questionari_utenti ON questionari.id=questionari_utenti.id_questionario "
                     + " LEFT OUTER JOIN utenti ON questionari_utenti.id_utente=utenti.id WHERE ";
-                    if(!utente.is_admin())
+                    if(!utente.is_admin_questionari())
                         query=query+"  id_utente="+Utility.is_null(utente.getId())+" ";         
                     else
                         query=query+"  id_utente IS NOT NULL ";         

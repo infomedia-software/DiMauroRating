@@ -30,6 +30,34 @@
                     }
                 });
             }
+             $(function(){
+                $('#fileupload').fileupload({              
+                    start:function(e,data){
+                        mostra_loader("Importazione in corso... l'operazione potrebbe richiedere svariati minuti...");
+                    },
+                    done: function (e, data) {                
+                        $.each(data.files, function (index, file) {
+                            var temp=data.result;
+                            alert("Importazione avvenuta correttamente");
+                            location.reload();
+                        });                                
+                    },     
+                    stop: function (e) {                
+                        nascondi_loader();                
+                    },                            
+                    disableImageResize: /Android(?!.*Chrome)|Opera/.test(window.navigator && navigator.userAgent),
+                    imageMaxWidth: 800,
+                    imageMaxHeight: 600,
+                    imageCrop: false,
+                    progressall: function (e, data) {
+                        var progress1 = parseInt(data.loaded / data.total * 100, 10);
+                        var progress2 = 100-progress1;
+                        $('#progress1').css('width',progress1 + '%');
+                        $('#progress2').css('width',progress2 + '%');
+                    }
+                }); 
+            });
+    
         </script>
         
     </head>
@@ -40,7 +68,10 @@
             <h1>                
                 Fornitori
             </h1>
-          
+            <div class="box">
+                <div class="etichetta float-right">Importa csv (codice;ragione sociale;email)</div>
+                <input class="pulsante" id="fileupload" type="file" name="files[]" data-url="<%=Utility.url%>/utenti/__importa_utenti.jsp" multiple>                               
+            </div>            
             <jsp:include page="_utenti.jsp"></jsp:include>
             </div>
         </div>

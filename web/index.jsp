@@ -21,10 +21,14 @@
         <% if(utente==null){%>
             <jsp:include page="_login.jsp"></jsp:include>
         <%}else{
-                if(utente.is_admin()){
+                if(utente.is_admin_questionari()){
                     response.sendRedirect(Utility.url+"/questionari/configura_questionari.jsp");
-                }else{%>
-                    <jsp:include page="_index.jsp"></jsp:include>
+                }
+                if(utente.is_admin_richieste()){
+                    response.sendRedirect(Utility.url+"/richieste/index.jsp");
+                }
+                if(!utente.is_admin_richieste() && !utente.is_admin_questionari()){%>
+                    <jsp:include page="_index_questionari.jsp"></jsp:include>
                 <%}%>
         <%}%>
 

@@ -6,6 +6,9 @@
 <%@ page trimDirectiveWhitespaces="true" %>
     <%
     String saveFile="";
+    String cartella_upload=Utility.elimina_null(request.getParameter("cartella_upload"));
+    
+    
     session=request.getSession();
    
     String contentType = request.getContentType();
@@ -27,6 +30,9 @@
 
         // Crea la cartella post (se non esiste già)
         String percorso=getServletContext().getRealPath("/")+"allegati/";
+        if(!cartella_upload.equals(""))
+            percorso=percorso+"/"+cartella_upload+"/";
+        System.out.println("percorso.."+percorso);
         File cartella=new File(percorso);
         cartella.mkdirs();            
         

@@ -5,6 +5,8 @@ public class Utente {
 
 
     private String id;
+    private String cliente_fornitore;
+    private String codice;
     private String referente;
     private String email;
     private String nome_utente;
@@ -32,6 +34,8 @@ public class Utente {
     
     public static String LINGUA_IT="it";
     public static String LINGUA_EN="en";
+    public static String MODULO_QUESTIONARI="questionari";
+    public static String MODULO_RICHIESTE="richieste";
     
     public boolean is_italiano(){
         return lingua.equals(LINGUA_IT);
@@ -40,10 +44,13 @@ public class Utente {
         return lingua.equals(LINGUA_EN);
     }
     
-    public boolean is_admin(){
-        return admin.equals("si");
+    public boolean is_admin_questionari(){
+        return admin.equals(MODULO_QUESTIONARI);
     }
     
+    public boolean is_admin_richieste(){
+        return admin.equals(MODULO_RICHIESTE);
+    }
     
     public String getId() {
         return id;
@@ -158,8 +165,28 @@ public class Utente {
     public void setNote(String note) {
         this.note = note;
     }
+
+    public String getCliente_fornitore() {
+        return cliente_fornitore;
+    }
+
+    public void setCliente_fornitore(String cliente_fornitore) {
+        this.cliente_fornitore = cliente_fornitore;
+    }
+
+    public String getCodice() {
+        return codice;
+    }
+
+    public void setCodice(String codice) {
+        this.codice = codice;
+    }
     
-    
-    
+    public boolean is_cliente(){
+        return cliente_fornitore.toLowerCase().contains("c");
+    }
+    public boolean is_fornitore(){
+        return cliente_fornitore.toLowerCase().contains("f");
+    }
     
 }

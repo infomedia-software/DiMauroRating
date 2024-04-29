@@ -263,7 +263,7 @@ Map<String,String> mappa_domande_risposte=GestioneQuestionari.getIstanza().mappa
             <h1><%=q.getNr()%> -  
                 <% if(utente.is_italiano()){%> <%=q.getTitolo_ita()%> <%}%> 
                 <% if(utente.is_inglese()){%> <%=q.getTitolo_eng()%> <%}%> 
-                <% if(qu.getData_ora_invio()==null && utente.is_admin()){%>
+                <% if(qu.getData_ora_invio()==null && utente.is_admin_questionari()){%>
                     <!-- button class="pulsante_tabella color_orange float-right" onclick="rigenera_questionario('<%=id_questionario_utente%>','<%=id_questionario%>')">Aggiorna Questionario</button-->
                 <%}%>
                 <% if(qu.getData_ora_valutazione()!=null){%>
@@ -271,7 +271,7 @@ Map<String,String> mappa_domande_risposte=GestioneQuestionari.getIstanza().mappa
                 <%}%>
                 <% if(qu.getData_ora_invio()!=null){%>
                     <div class="tag color_green float-right">Inviato il <%=qu.getData_ora_invio_it()%></div>
-                    <% if(utente.is_admin()){%>
+                    <% if(utente.is_admin_questionari()){%>
                         <button class="pulsante_tabella color_orange float-right" value="b" name="stato" onclick="modifica_questionario_utente('<%=id_questionario_utente%>',this)">Passa in Bozza</button>
                     <%}%>
                 <%}%>
@@ -318,7 +318,7 @@ Map<String,String> mappa_domande_risposte=GestioneQuestionari.getIstanza().mappa
                             </td>
                         </tr>
                     </table>
-                    <% if(qu.getData_ora_invio()!=null && qu.getData_ora_valutazione()!=null && utente.is_admin()){%>
+                    <% if(qu.getData_ora_invio()!=null && qu.getData_ora_valutazione()!=null && utente.is_admin_questionari()){%>
                         <div class="height-10"></div>
                         <div class="height-10"></div>
                         <button class="pulsante float-right"  onclick="modifica_questionario_utente('<%=id_questionario_utente%>',this)" name="valutazione" value="0">Modifica Valutazione</button>
@@ -335,7 +335,7 @@ Map<String,String> mappa_domande_risposte=GestioneQuestionari.getIstanza().mappa
                             <th style="width: 100px;">Nr.</th>
                             <th><% if(utente.is_italiano()){%>Domanda<%}else{%>Question<%}%></th>
                             <th><% if(utente.is_italiano()){%>Risposta<%}else{%>Answer<%}%></th>
-                            <%if(utente.is_admin() && qu.getData_ora_invio()!=null){%>
+                            <%if(utente.is_admin_questionari()&& qu.getData_ora_invio()!=null){%>
                                 <th style="width: 80px;">Peso</th>
                                 <th style="width: 80px;">Valutazione</th>
                             <%}%>
@@ -359,7 +359,7 @@ Map<String,String> mappa_domande_risposte=GestioneQuestionari.getIstanza().mappa
                                         <%=r.getDomanda().getTesto_eng()%>
                                     <%}%>
                                 </td>
-                                <td id="risposta_<%=r.getId()%>" <% if((!utente.getId().equals(qu.getUtente().getId()) && !utente.is_admin()) || qu.getData_ora_invio()!=null){%> style="pointer-events: none;" <%}%>>
+                                <td id="risposta_<%=r.getId()%>" <% if((!utente.getId().equals(qu.getUtente().getId()) && !utente.is_admin_questionari()) || qu.getData_ora_invio()!=null){%> style="pointer-events: none;" <%}%>>
                                     <% if(r.getDomanda().is_testo()){%>
                                         <input type="text" domanda="<% if(utente.is_italiano()){%><%=r.getDomanda().getTesto_ita()%><%}else{%><%=r.getDomanda().getTesto_ita()%><%}%>" id="<%=r.getId()%>" name="risposta" onchange="modifica_risposta('<%=r.getId()%>',this)" value="<%=r.getRisposta()%>">
                                     <%}%>
@@ -408,7 +408,7 @@ Map<String,String> mappa_domande_risposte=GestioneQuestionari.getIstanza().mappa
                                         <%}%>    
                                     <%}%>
                                 </td>
-                                <%if(utente.is_admin() && qu.getData_ora_invio()!=null){%>
+                                <%if(utente.is_admin_questionari()&& qu.getData_ora_invio()!=null){%>
                                     <td style="text-align: right;">
                                         <%=Utility.elimina_zero(r.getDomanda().getPeso())%>
                                     </td>
@@ -424,7 +424,7 @@ Map<String,String> mappa_domande_risposte=GestioneQuestionari.getIstanza().mappa
                     <% if(qu.getData_ora_invio()==null){%>
                         <button class="pulsante float-right" name="stato" value="1" onclick="controlla_risposte('<%=id_questionario_utente%>',this);" >Invia Questionario</button>
                     <%}%>
-                    <% if(qu.getData_ora_invio()!=null && qu.getData_ora_valutazione()==null && utente.is_admin()){%>
+                    <% if(qu.getData_ora_invio()!=null && qu.getData_ora_valutazione()==null && utente.is_admin_questionari()){%>
                         <button class="pulsante float-right"  onclick="salva_valutazione('<%=id_questionario_utente%>',this)" >Salva Valutazione</button>
                     <%}%>
                     

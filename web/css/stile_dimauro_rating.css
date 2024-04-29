@@ -6,10 +6,6 @@
     font-family: Roboto;    
 }
 
-a{
-    text-decoration: none;
-}
-
 #loader{
     position: fixed;
     top:0;
@@ -113,8 +109,9 @@ p,li{
 
 
 a{
-    text-decoration: none;
-    color:black;
+    text-decoration: underline;
+    color:#444;
+    font-size: 12px;
 }
 a:hover{
     text-decoration: none;
@@ -521,6 +518,9 @@ h3{
 .color_green{
     background-color: 	#008744;
 }
+.color_red{
+    background-color: #F11616;
+}
 .color_orange{
     background-color: 	#ffa700;   
 }
@@ -706,4 +706,9 @@ h3{
   select option:checked::after {
     content: '\25BC'; /* Unicode per freccia in giù */
   }
+}
+
+
+a.pulsante, a.pulsante_tabella{
+    text-decoration: none !important;
 }

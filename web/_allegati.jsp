@@ -9,6 +9,7 @@
     Utente utente=(Utente)session.getAttribute("utente");
     String query=Utility.elimina_null(request.getParameter("query"));
     String id_risposta=Utility.elimina_null(request.getParameter("id_risposta"));
+    String cartella_upload=Utility.elimina_null(request.getParameter("cartella_upload"));
     
     Risposta r=GestioneQuestionari.getIstanza().ricerca_risposte(" risposte.id="+id_risposta).get(0);
     ArrayList<Allegato> allegati=GestioneAllegati.getIstanza().ricercaAllegati(query);
@@ -52,7 +53,7 @@
 
 <input type='hidden' id='queryallegati' value="<%=query%>">
 <input type='hidden' id='id_risposta' value="<%=id_risposta%>">
-
+<input type='hidden' id='allegati' value="<%=allegati.size()%>">
 <div id='allegati'>
     <div id='allegati_inner'>        
         
@@ -70,17 +71,17 @@
                 <%for(Allegato allegato:allegati){%>
                     <tr>                
                         <td>
-                            <a href='<%=Utility.url%>/allegati/<%=allegato.getUrl()%>' class="pulsante_small" target="_blank">                        
+                            <a href='<%=Utility.url%>/allegati/<%=cartella_upload%>/<%=allegato.getUrl()%>' class="pulsante_small" target="_blank">                        
                                 <img src="<%=Utility.img_link%>" alt="edit">
                             </a>
                         </td>
                         <td style="overflow: hidden;">
-                            <a href='<%=Utility.url%>/allegati/<%=allegato.getUrl()%>' target="_blank">                        
+                            <a href='<%=Utility.url%>/allegati/<%=cartella_upload%>/<%=allegato.getUrl()%>' target="_blank">                        
                                 <%=allegato.getUrl()%>
                             </a>
                         </td>                        
                         <td>                            
-                            <button class="pulsante_small color_red" onclick="modifica_allegato(this,'<%=allegato.getId()%>');" id="stato" value="-1">
+                            <button class="pulsante_small color_red" type="button" onclick="modifica_allegato(this,'<%=allegato.getId()%>');" id="stato" value="-1">
                                 <img src="<%=Utility.url%>/images/delete.png" alt="edit">
                             </button>                            
                         </td>

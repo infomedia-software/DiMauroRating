@@ -33,7 +33,7 @@
         <table class="tabella" id="tabella">
             <tr>
                 <th style="width: 130px;"></th>
-                <% if(utente.is_admin()){%>
+                <% if(utente.is_admin_questionari()){%>
                     <th>Fornitore</th>
                 <%}%>
                 <th style="width: 100px;">N.</th>
@@ -47,7 +47,7 @@
             for(QuestionarioUtente q:lista_creati){%>
             <tr>
                 <td>
-                    <% if(!utente.is_admin()){%>
+                    <% if(!utente.is_admin_questionari()){%>
                         <a href="questionari/questionario_utente.jsp?id_questionario_utente=<%=q.getId()%>&id_questionario=<%=q.getId_questionario()%>" class="pulsante_tabella color_orange"><img src="<%=Utility.img_edit%>">
                             <%if(utente.is_italiano()){%>Compila<%}else{%>Compile<%}%>
                         </a>
@@ -62,7 +62,7 @@
                         <%}%>
                     <%}%>
                 </td>
-                <% if(utente.is_admin()){%>
+                <% if(utente.is_admin_questionari()){%>
                     <td><%=q.getUtente().getRagione_sociale()%></td>
                 <%}%>
                 <td><%=q.getNr()%>/<%=q.getAnno()%></td>
@@ -96,7 +96,7 @@
                 </td>
             </tr>
         <% ids_questionari_creati=ids_questionari_creati+q.getId_questionario()+","; }%>
-        <% if(!utente.is_admin()){%>
+        <% if(!utente.is_admin_questionari()){%>
              <% 
                  ids_questionari_creati=Utility.rimuovi_ultima_occorrenza(ids_questionari_creati, ",");
                  String query=" attivo='si' ";

@@ -91,6 +91,7 @@ public class GestioneUtenti {
                 utente.setReferente(rs.getString("referente"));
                 utente.setEmail(rs.getString("email"));
                 utente.setId(rs.getString("id"));
+                utente.setCodice(rs.getString("codice"));
                 utente.setNome_utente(rs.getString("nome_utente"));
                 utente.setPassword(rs.getString("password"));
                 utente.setRuolo(rs.getString("ruolo"));
@@ -117,6 +118,14 @@ public class GestioneUtenti {
         
         
         return toReturn;
+    }
+    
+    public ArrayList<Utente> clienti(){
+        return ricerca(" LOWER(cliente_fornitore) LIKE '%c%' AND stato='1' ");
+    }
+    
+    public ArrayList<Utente> fornitori(){
+        return ricerca(" LOWER(cliente_fornitore) LIKE '%f%' AND stato='1' ");
     }
     
     public Utente get_utente(String id_utente){

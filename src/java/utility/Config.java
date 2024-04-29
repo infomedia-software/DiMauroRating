@@ -15,7 +15,7 @@ public class Config {
     //public static String smtp_url="smtp.dimauroog.it";
     
     public static String mittente_email="info@infomediatek.it";
-    public static String mittente_password="Rob.Dav.1986";
+    public static String mittente_password="aBJyEsYQar94o8oDPB@mwj";
     public static String smtp_porta="2525";
     public static String smtp_url="mail.smtp2go.com";
     

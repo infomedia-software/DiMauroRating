@@ -2,7 +2,8 @@
 
 <%
     String idrif=Utility.elimina_null(request.getParameter("idrif"));
-    String rif=Utility.elimina_null(request.getParameter("rif"));    
+    String rif=Utility.elimina_null(request.getParameter("rif"));  
+    String cartella_upload=Utility.elimina_null(request.getParameter("cartella_upload"));
 %>
 
 <script type='text/javascript'>
@@ -41,9 +42,9 @@
     }
 </script>
     
-<input id="fileupload_<%=rif%>_<%=idrif%>" style='display:none' type="file" name="files[]" data-url="<%=Utility.url%>/__upload.jsp" multiple >
+<input id="fileupload_<%=rif%>_<%=idrif%>" style='display:none' type="file" name="files[]" data-url="<%=Utility.url%>/__upload.jsp?cartella_upload=<%=cartella_upload%>" multiple >
 
-<button class='pulsante_tabella float-right' onclick="uploadclick_<%=rif%>_<%=idrif%>();">       
+<button class='pulsante_tabella float-right' type="button" onclick="uploadclick_<%=rif%>_<%=idrif%>();">       
     <img src="<%=Utility.url%>/images/add.png">
     <%if(rif.toUpperCase().
             contains("IMMAGINE")){%>
