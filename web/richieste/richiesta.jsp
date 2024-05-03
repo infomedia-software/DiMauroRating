@@ -38,7 +38,8 @@
                 var allegati=parseInt($("#form_invia_mail #allegati").val());
                 var modulo=$("#form_invia_mail #modulo").val();
                 var id_soggetti=$("#form_invia_mail #id_soggetti").val();
-                if(oggetto=="" || testo=="" || allegati==0 || modulo=="" || id_soggetti==""){
+                var altre_mail=$("#form_invia_mail #altre_mail").val();
+                if(oggetto=="" || testo=="" || allegati==0 || modulo=="" || (id_soggetti=="" && altre_mail=="") ){
                     alert("Impossibile procedere.\nVerifica di aver inserito l'oggetto, il testo, gli allegati, il modulo e di aver selezionato almeno un'azienda con indirizzo email settato");
                     return;
                 }
@@ -103,6 +104,12 @@
                 
             }
             
+            function seleziona_altre_mail(){
+                var altre_mail = $('.checkbox_altre_mail:checked').map(function() {return this.value;}).get().toString();
+                $("#altre_mail").val(altre_mail);
+                
+            }
+            
             function aggiorna_utente(){
                 mostra_loader("Modifica in corso...");
                 location.reload();
@@ -120,7 +127,11 @@
               });
 
         </script>
-      
+        <style>
+            #tabella td, #tabella td input,#tabella td a,#tabella td div{
+                font-size: 10px !important;
+            }
+        </style>
     </head>
     <body>
                 
@@ -180,18 +191,21 @@
                 <div class="etichetta">
                     Destinatari
                 </div>
+                <button class="pulsante color_evasa" type="button" onclick="nuova_richiesta_righe()"><img src="<%=Utility.url%>/images/email.png">Invia Email</button>
                     <input type="text" id="search" class="float-right" placeholder="Ricerca..." style="margin-top: 5px; height: 25px; padding-left: 5px;">
                     <a class="pulsante_tabella float-right color_eee" <% if(risposto.equals("no")){%> style="color:white;background-color: #008744;" <%}%> href="<%=Utility.url%>/richieste/richiesta.jsp?id_richiesta=<%=id_richiesta%>&risposto=no">Mancata Risposta</a>
                     <a class="pulsante_tabella float-right color_eee" <% if(risposto.equals("si")){%> style="color:white;background-color: #008744;" <%}%> href="<%=Utility.url%>/richieste/richiesta.jsp?id_richiesta=<%=id_richiesta%>&risposto=si">Risposto</a>
                     <input type="hidden" name="id_soggetti" id="id_soggetti">
+                    <input type="hidden" name="altre_mail" id="altre_mail">
                     <table class="tabella" id="tabella">
                         <thead>
                             <tr>
                                 <th style="width: 30px;padding-left: 0px;"><input type="checkbox" onclick="selectall(this)"></th>
-                                <th style="width: 80px;">Codice</th>
+                                <th style="width: 40px;">Codice</th>
                                 <th>Azienda</th>
-                                <th>Email</th>
-                                <th>Ultimo Invio</th>
+                                <th>Email Principale</th>
+                                <th>Altre Email</th>
+                                <th style="width: 100px;">Ultimo Invio</th>
                                 <th>Data Risposta</th>
                                 <th style="width: 50px;">Log</th>
                             </tr>
@@ -201,35 +215,52 @@
                                 RichiestaRiga rr=new RichiestaRiga();
                                 if(mappa_soggetto_richieste.get(s.getId())!=null)
                                     rr=mappa_soggetto_richieste.get(s.getId());
-                                if( risposto.equals("") || (risposto.equals("si") && !rr.getData_risposta_it().equals("")) || (risposto.equals("no") && rr.getData_risposta_it().equals("")) ){
+                                if(risposto.equals("") || (risposto.equals("si") && !rr.getData_risposta_it().equals("")) || (risposto.equals("no") && rr.getData_risposta_it().equals("")) ){
+                                    if(!s.getEmail_principale().equals("")){
                             %>
-                                <tr>
-                                    <td>
-                                        <% if(!s.getEmail().equals("")){%>
-                                            <input type="checkbox" value="<%=s.getId()%>" email="<%=s.getEmail()%>" class="checkbox_soggetti" onclick="seleziona_soggetto()">
-                                        <%}%>
-                                    </td>
-                                    <td><%=s.getCodice()%></td>
-                                    <td><a href="<%=Utility.url%>/utenti/utente.jsp?id_utente=<%=s.getId()%>"><%=s.getRagione_sociale()%></a></td>
-                                    <td><input type="text" value="<%=s.getEmail()%>" id="email" refresh="si" onchange="modifica_utente('<%=s.getId()%>',this)"></td>
-                                    <td><%=rr.getData_ultimo_invio_it()%></td>
-                                    <td>
-                                        <% if(rr.is_risposto()){%>
-                                            <div class="tag color_evasa"><%=rr.getData_risposta_it()%></div>
-                                        <%}%>
-                                    </td>                               
-                                    <td>
-                                        <%if(mappa_soggetto_richieste.get(s.getId())!=null){%>
-                                            <button type="button" class="pulsante_small float-right" onclick="mostra_popup('_log.jsp?id_richiesta_riga=<%=rr.getId()%>')"><img src="<%=Utility.url%>/images/search.png"></button>
-                                        <%}%>
-                                    </td>
-                                </tr>
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" value="<%=s.getId()%>" email="<%=s.getEmail_principale()%>" class="checkbox_soggetti" onclick="seleziona_soggetto()">
+                                        </td>
+                                        <td><%=s.getCodice()%></td>
+                                        <td><a href="<%=Utility.url%>/utenti/utente.jsp?id_utente=<%=s.getId()%>" target="_blank"><%=s.getRagione_sociale()%></a></td>
+                                        <td>
+                                            <input type="text" value="<%=s.getEmail_principale()%>" id="email_principale" onchange="modifica_utente('<%=s.getId()%>',this)">
+                                        </td>
+                                        <td>
+                                            <% String[] emails=s.getEmail().split(",");
+                                                int i=0;
+                                                for(String email:emails){
+                                                    if(!email.equals("")){%>
+                                                    <div style="float: left; width: 20px;">
+                                                        <input type='checkbox' class="checkbox_altre_mail" value="<%=s.getId()%>_<%=i%>" style='width: 15px; height: 15px;' onclick="seleziona_altre_mail()">
+                                                    </div>
+                                                    <div style="float: left; width: calc(100% - 20px); font-size: 8px;">
+                                                        <%=email%>
+                                                    </div>
+                                                    <div class="clear"></div>
+                                                <%i++;}%>
+                                            <%}%>
+                                        </td>
+                                        <td><%=rr.getData_ultimo_invio_it()%></td>
+                                        <td>
+                                            <% if(rr.is_risposto()){%>
+                                                <div class="tag color_evasa"><%=rr.getData_risposta_it()%></div>
+                                            <%}%>
+                                        </td>                               
+                                        <td>
+                                            <%if(mappa_soggetto_richieste.get(s.getId())!=null){%>
+                                                <button type="button" class="pulsante_small float-right" onclick="mostra_popup('_log.jsp?id_richiesta_riga=<%=rr.getId()%>')"><img src="<%=Utility.url%>/images/search.png"></button>
+                                            <%}%>
+                                        </td>
+                                    </tr>
+                                    <%}%>
                                 <%}%>
                             <%}%>
                         </tbody>
                         </table>
                         <div class="height-10"></div>
-                        <button class="pulsante margin-auto color_evasa" type="button" onclick="nuova_richiesta_righe()"><img src="<%=Utility.url%>/images/email.png">Invia Email</button>
+                        
                         
                     </form>
                 </div>

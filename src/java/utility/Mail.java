@@ -46,7 +46,7 @@ public class Mail {
             Session session = Session.getDefaultInstance(props,  
             new javax.mail.Authenticator() {  
             protected PasswordAuthentication getPasswordAuthentication() {  
-                String email=Utility.mittente_email;                
+                String email=Utility.smtp_nome_utente;                
                 String password=Utility.mittente_password;
                 return new PasswordAuthentication(email,password);  
                }  
@@ -95,7 +95,7 @@ public class Mail {
             final String password="Rob.Dav.1986";
             String smtp="smtps.aruba.it";
             */
-            final String email=Utility.mittente_email;
+            final String email=Utility.smtp_nome_utente;
             final String password=Utility.mittente_password;
             String smtp=Utility.smtp_url;
             String porta=Utility.smtp_porta;

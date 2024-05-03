@@ -38,63 +38,69 @@
                             <div class="height-10"></div>
                         </div>
                         <div class="clear"></div>
-                        
-                        <div class='etichetta'>Codice</div>
-                        <div class='valore'>
-                            <input type='text' id='codice' onchange="modifica_utente(<%=id_utente%>,this);" value="<%=utente.getCodice()%>">
-                        </div>
-                        
+                        <% if(utente_sessione.is_admin_richieste()){%>
+                            <div class='etichetta'>Codice</div>
+                            <div class='valore'>
+                                <input type='text' id='codice' onchange="modifica_utente(<%=id_utente%>,this);" value="<%=utente.getCodice()%>">
+                            </div>
+                            <div class='etichetta'>Tipologia</div>
+                            <div class='valore'>
+                                <input type='text' id='tipologia' onchange="modifica_utente(<%=id_utente%>,this);" value="<%=utente.getTipologia()%>">
+                            </div>
+                            <div class='etichetta'>Email Principale</div>
+                            <div class='valore'>
+                                <input type='text' id='email_principale' onchange="modifica_utente(<%=id_utente%>,this);" value="<%=utente.getEmail_principale()%>">
+                            </div>
+                        <%}%>
                         <div class='etichetta'>Email</div>
                         <div class='valore'>
                             <input type='text' id='email' onchange="modifica_utente(<%=id_utente%>,this);" value="<%=utente.getEmail()%>">
                         </div>
-                        <% if(utente_sessione.is_admin_questionari()){%>
-                        
-                            <div class='etichetta'>P.Iva / C.F.</div>
+                        <div class='etichetta'>P.Iva / C.F.</div>
+                        <div class='valore'>
+                            <input type='text' id='piva' onchange="modifica_utente(<%=id_utente%>,this);" value="<%=utente.getPiva()%>">
+                        </div>
+
+                        <div class="clear"></div>
+                        <div class="width-50 float-left">
+                            <div class='etichetta'>Referente</div>
                             <div class='valore'>
-                                <input type='text' id='piva' onchange="modifica_utente(<%=id_utente%>,this);" value="<%=utente.getPiva()%>">
+                                <input type='text' id='referente'  onchange="modifica_utente(<%=id_utente%>,this);" value="<%=utente.getReferente()%>">
                             </div>
-
-                            <div class="clear"></div>
-                            <div class="width-50 float-left">
-                                <div class='etichetta'>Referente</div>
-                                <div class='valore'>
-                                    <input type='text' id='referente'  onchange="modifica_utente(<%=id_utente%>,this);" value="<%=utente.getReferente()%>">
-                                </div>
+                        </div>
+                        <div class="width-50 float-left">
+                            <div class='etichetta'>Ruolo</div>
+                            <div class='valore'>
+                                <input type='text' id='ruolo' onchange="modifica_utente(<%=id_utente%>,this);" value="<%=utente.getRuolo()%>" >
                             </div>
-                            <div class="width-50 float-left">
-                                <div class='etichetta'>Ruolo</div>
-                                <div class='valore'>
-                                    <input type='text' id='ruolo' onchange="modifica_utente(<%=id_utente%>,this);" value="<%=utente.getRuolo()%>" >
-                                </div>
+                        </div>
+                        <div class="width-50 float-left">
+                            <div class='etichetta'>Indirizzo</div>
+                            <div class='valore'>
+                                <input type='text' id='indirizzo' onchange="modifica_utente(<%=id_utente%>,this);" value="<%=utente.getIndirizzo()%>">
                             </div>
-                            <div class="width-50 float-left">
-                                <div class='etichetta'>Indirizzo</div>
-                                <div class='valore'>
-                                    <input type='text' id='indirizzo' onchange="modifica_utente(<%=id_utente%>,this);" value="<%=utente.getIndirizzo()%>">
-                                </div>
+                        </div>
+                        <div class="width-25 float-left">
+                            <div class='etichetta'>Comune</div>
+                            <div class='valore'>
+                                <input type='text' id='comune' onchange="modifica_utente(<%=id_utente%>,this);" value="<%=utente.getComune()%>">
                             </div>
-                            <div class="width-25 float-left">
-                                <div class='etichetta'>Comune</div>
-                                <div class='valore'>
-                                    <input type='text' id='comune' onchange="modifica_utente(<%=id_utente%>,this);" value="<%=utente.getComune()%>">
-                                </div>
+                        </div>
+                        <div class="width-25 float-left">
+                            <div class='etichetta'>Provincia</div>
+                            <div class='valore'>
+                                <input type='text' id='provincia' onchange="modifica_utente(<%=id_utente%>,this);" value="<%=utente.getProvincia()%>">
                             </div>
-                            <div class="width-25 float-left">
-                                <div class='etichetta'>Provincia</div>
-                                <div class='valore'>
-                                    <input type='text' id='provincia' onchange="modifica_utente(<%=id_utente%>,this);" value="<%=utente.getProvincia()%>">
-                                </div>
-                            </div>
-                            <div class="etichetta">Lingua</div>
-                            <div class="valore">
-                                <select id="lingua" onchange="modifica_utente(<%=id_utente%>,this);" value="<%=utente.getProvincia()%>">
-                                    <option value="<%=Utente.LINGUA_IT%>" <% if(utente.is_italiano()){%>selected="true"<%}%>>Italiano</option>
-                                    <option value="<%=Utente.LINGUA_EN%>" <% if(utente.is_inglese()){%>selected="true"<%}%>>English</option>
-                                </select>
-                            </div>
-                            <div class="height-10"></div>
-
+                        </div>
+                        <div class="etichetta">Lingua</div>
+                        <div class="valore">
+                            <select id="lingua" onchange="modifica_utente(<%=id_utente%>,this);" value="<%=utente.getProvincia()%>">
+                                <option value="<%=Utente.LINGUA_IT%>" <% if(utente.is_italiano()){%>selected="true"<%}%>>Italiano</option>
+                                <option value="<%=Utente.LINGUA_EN%>" <% if(utente.is_inglese()){%>selected="true"<%}%>>English</option>
+                            </select>
+                        </div>
+                        <div class="height-10"></div>
+                        <% if(utente_sessione.is_admin_questionari()){%>
                             <h3>Dati Accesso</h3>
                             <div class='etichetta'>Nome Utente</div>
                             <div class='valore'>

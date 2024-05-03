@@ -92,11 +92,11 @@
             reader.readNext();
 
             while ((nextLine = reader.readNext()) != null) {
-                // Assuming codice is in column 0, ragione sociale in column 1, email in column 2
-                String codice = nextLine[0];
-                String ragioneSociale = nextLine[1];
-                String email = nextLine[2];
-
+                String tipologia = nextLine[0];
+                String codice = nextLine[1];
+                String ragioneSociale = nextLine[2];
+                String email_principale = nextLine[3];
+                String email = nextLine[4];
                 String is_presente=Utility.getIstanza().getValoreByCampo("utenti", "id", "codice="+Utility.is_null(codice));
                 String cliente_fornitore="f";
                 if(!codice.equals("")){
@@ -106,9 +106,11 @@
                         cliente_fornitore="c";
                 }
                 if(is_presente.equals(""))
-                    Utility.getIstanza().query_insert("INSERT INTO utenti(codice,cliente_fornitore,ragione_sociale,email,nome_utente,password,stato)"
+                    Utility.getIstanza().query_insert("INSERT INTO utenti(codice,cliente_fornitore,tipologia,ragione_sociale,email_principale,email,nome_utente,password,stato)"
                             + " VALUES("
-                            + " "+Utility.is_null(codice)+","+Utility.is_null(cliente_fornitore)+","+Utility.is_null(ragioneSociale)+","+Utility.is_null(email)+","+Utility.is_null(Utility.crea_password())+","+Utility.is_null(Utility.crea_password())+",'1')");
+                            + " "+Utility.is_null(codice)+","+Utility.is_null(cliente_fornitore)+","+Utility.is_null(tipologia)+","
+                            +Utility.is_null(ragioneSociale)+","
+                            +Utility.is_null(email_principale)+","+Utility.is_null(email)+","+Utility.is_null(Utility.crea_password())+","+Utility.is_null(Utility.crea_password())+",'1')");
                 else
                     Utility.getIstanza().query("UPDATE utenti SET ragione_sociale="+Utility.is_null(ragioneSociale)+", email="+Utility.is_null(email)+" WHERE codice="+Utility.is_null(codice));
             }

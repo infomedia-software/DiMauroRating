@@ -1,5 +1,8 @@
 package beans;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 
 public class Utente {
 
@@ -9,6 +12,8 @@ public class Utente {
     private String codice;
     private String referente;
     private String email;
+    private String email_principale;
+    private String tipologia;
     private String nome_utente;
     private String password;
     private String ruolo;
@@ -21,6 +26,8 @@ public class Utente {
     private String admin;
     private String note;
 
+    private ArrayList<String> lista_email;
+    
     public Utente() {
         this.id = id;
         this.referente = referente;
@@ -181,6 +188,24 @@ public class Utente {
     public void setCodice(String codice) {
         this.codice = codice;
     }
+
+    public String getEmail_principale() {
+        return email_principale;
+    }
+
+    public void setEmail_principale(String email_principale) {
+        this.email_principale = email_principale;
+    }
+
+    public String getTipologia() {
+        return tipologia;
+    }
+
+    public void setTipologia(String tipologia) {
+        this.tipologia = tipologia;
+    }
+    
+    
     
     public boolean is_cliente(){
         return cliente_fornitore.toLowerCase().contains("c");
@@ -188,5 +213,12 @@ public class Utente {
     public boolean is_fornitore(){
         return cliente_fornitore.toLowerCase().contains("f");
     }
+
+    public ArrayList<String> getLista_email() {
+        String emails[]=email.split(",");
+        return new ArrayList<String>(Arrays.asList(emails));
+    }
+
+    
     
 }

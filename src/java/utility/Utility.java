@@ -31,7 +31,7 @@ public class Utility {
     public static String mittente_password=Config.mittente_password;
     public static String smtp_porta=Config.smtp_porta;
     public static String smtp_url=Config.smtp_url;
-    
+    public static String smtp_nome_utente=Config.smtp_nome_utente;
     
     public static Utility getIstanza(){
         if(istanza==null){
@@ -871,7 +871,7 @@ public class Utility {
 
     public static synchronized String rimuovi_ultima_occorrenza(String stringa,String caratteri){
         String toReturn=stringa;
-        if(stringa.contains(caratteri))
+        if(stringa.trim().endsWith(caratteri))
             toReturn=stringa.substring(0,stringa.lastIndexOf(caratteri));
         return toReturn;
     }
