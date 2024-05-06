@@ -105,7 +105,8 @@ public class Mail {
             props.put("mail.smtp.host", smtp);     
             props.put("mail.smtp.port", porta);            
             props.put("mail.smtp.auth", "true");
-            props.put("mail.smtp.debug", "true");
+            props.put("mail.debug", "true");
+            //props.put("mail.smtp.starttls.enable", "true");
             props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");   
             
             

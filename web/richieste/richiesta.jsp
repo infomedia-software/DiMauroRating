@@ -176,7 +176,7 @@
                         <input type="hidden" value="<%=r.getFile_risposta()%>" id="modulo" name="modulo">
                             <%if(!r.getFile_risposta().equals("")){ %>
                                 <span>
-                                    <a href="<%=Utility.url%>/allegati/<%=r.getFile_risposta()%>" target="_blank">Modulo Allegato (<%=r.getFile_risposta()%>)</a>
+                                    <a href="<%=Utility.url%>/allegati/<%=id_richiesta%>/<%=r.getFile_risposta()%>" target="_blank">Modulo Allegato (<%=r.getFile_risposta()%>)</a>
                                 </span>
                                     <button type="button" onclick="modifica_richiesta('<%=id_richiesta%>',this);" refresh="si" id="file_risposta" class="pulsante_small color_red float-right"><img src="<%=Utility.img_delete%>"></button>
                                 <div class="height-10"></div>

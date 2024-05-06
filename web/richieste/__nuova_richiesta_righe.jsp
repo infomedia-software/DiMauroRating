@@ -31,12 +31,16 @@
         String[] temp2=t.split("_");
         if(temp2.length>0){
             String id_soggetto=temp2[0];
-            id_soggetti=id_soggetto+","+id_soggetti;
-            indice_email=Utility.converti_string_int(temp2[1]);
-            if(mappa_soggetto_mail.get(id_soggetto)==null)
-                mappa_soggetto_mail.put(id_soggetto, mappa_utenti_lista_mail.get(id_soggetto).get(indice_email));
-            else
-                mappa_soggetto_mail.put(id_soggetto, mappa_soggetto_mail.get(id_soggetto)+","+mappa_utenti_lista_mail.get(id_soggetto).get(indice_email));
+            if(!id_soggetto.equals(""))
+                id_soggetti=id_soggetto+","+id_soggetti;
+            if(temp.length>1)
+                indice_email=Utility.converti_string_int(temp2[1]);
+            if(indice_email!=-1){
+                if(mappa_soggetto_mail.get(id_soggetto)==null)
+                    mappa_soggetto_mail.put(id_soggetto, mappa_utenti_lista_mail.get(id_soggetto).get(indice_email));
+                else
+                    mappa_soggetto_mail.put(id_soggetto, mappa_soggetto_mail.get(id_soggetto)+","+mappa_utenti_lista_mail.get(id_soggetto).get(indice_email));
+            }
             
         }   
     }
@@ -52,7 +56,8 @@
     ArrayList<Allegato> allegati_obj=GestioneAllegati.getIstanza().ricercaAllegati(query_allegati);
     
     String percorso_tomcat="C:/Users/david/Documents/NetbeansProjects/DiMauroRating/build/web/allegati/"+id_richiesta+"/";      //locale
-    //percorso_tomcat="C:/Program Files (x86)/Apache Software Foundation/Tomcat 8.5/webapps/DiMauroRating/allegati/"+id_richiesta+"/";
+    if(!Utility.url.contains("localhost"))
+        percorso_tomcat="C:/Program Files (x86)/Apache Software Foundation/Tomcat 8.5/webapps/DiMauroRating/allegati/"+id_richiesta+"/";
     for(Allegato a:allegati_obj){
         String path=percorso_tomcat+a.getUrl();
         allegati_email.add(path);
