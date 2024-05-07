@@ -87,7 +87,7 @@
             Utility.getIstanza().query("UPDATE richieste_righe SET log=CONCAT(log,'<br>',"+Utility.is_null(log)+"),data_ultimo_invio=NOW() WHERE id="+mappa_soggetto_richieste.get(s.getId()).getId());
         }
         ArrayList<String> destinatari=new ArrayList<String>(Arrays.asList(email_invio.split(",")));
-        Mail.invia_mail_allegati(Config.mittente_email, destinatari, oggetto, testo, allegati_email);
+        Mail.invia_mail_allegati(Config.mittente_email, destinatari, oggetto, email_testo, allegati_email);
     }
     
     

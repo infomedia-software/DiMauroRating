@@ -69,7 +69,7 @@
                 Fornitori
             </h1>
             <div class="box">
-                <div class="etichetta float-right">Importa csv (codice;ragione sociale;email)</div>
+                <div class="etichetta float-right">Importa csv (<a href="importa.csv">Scarica file di esempio</a>)</div>
                 <input class="pulsante" id="fileupload" type="file" name="files[]" data-url="<%=Utility.url%>/utenti/__importa_utenti.jsp" multiple>                               
             </div>            
             <jsp:include page="_utenti.jsp"></jsp:include>

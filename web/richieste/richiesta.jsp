@@ -245,7 +245,7 @@
                                         <td><%=rr.getData_ultimo_invio_it()%></td>
                                         <td>
                                             <% if(rr.is_risposto()){%>
-                                                <div class="tag color_evasa"><%=rr.getData_risposta_it()%></div>
+                                                <div class="tag color_evasa"><a style="color:white;" href="<%=Utility.url%>/allegati/<%=id_richiesta%>/<%=s.getId()%>/<%=rr.getUpload_risposta()%>" target="_blank"><%=rr.getData_risposta_it()%></div>
                                             <%}%>
                                         </td>                               
                                         <td>
