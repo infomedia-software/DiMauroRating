@@ -11,7 +11,8 @@ public class Config {
     
     public static String mittente_email="info@dimauroog.it";
     public static String mittente_password="54LKJ7j3df53fRCFa";
-    public static String smtp_porta=""; // deve essere lasciato vuoto per funzionare. 25
+    public static String smtp_porta=""; // deve essere lasciato vuoto per funzionare online. ( 25 )
+    //public static String smtp_porta="465"; // locale + ssl + starttls
     public static String smtp_nome_utente="Dimauroog5392";
     public static String smtp_url="Smtp6.ilger.com";
     /*

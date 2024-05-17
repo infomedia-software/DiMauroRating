@@ -89,7 +89,10 @@
         }
         ArrayList<String> destinatari=new ArrayList<String>(Arrays.asList(email_invio.split(",")));
         //Mail.invia_mail_allegati(Config.mittente_email, destinatari, oggetto, email_testo, allegati_email);
-        Mail.invia_mail_allegati("Smtp6.ilger.com","","Dimauroog5392","54LKJ7j3df53fRCFa",false,false,"info@dimauroog.it", destinatari, oggetto, email_testo, allegati_email);		
+        if(Utility.url.contains("localhost"))
+            Mail.invia_mail_allegati("Smtp6.ilger.com","465","Dimauroog5392","54LKJ7j3df53fRCFa",true,true,"info@dimauroog.it", destinatari, oggetto, email_testo, allegati_email);		
+        else
+            Mail.invia_mail_allegati("Smtp6.ilger.com","","Dimauroog5392","54LKJ7j3df53fRCFa",false,false,"info@dimauroog.it", destinatari, oggetto, email_testo, allegati_email);		
     }
     
     
