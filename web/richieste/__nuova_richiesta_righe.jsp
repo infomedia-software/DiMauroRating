@@ -62,7 +62,8 @@
         String path=percorso_tomcat+a.getUrl();
         allegati_email.add(path);
     }
-    allegati_email.add(percorso_tomcat+modulo);
+    if(!modulo.equals(""))
+        allegati_email.add(percorso_tomcat+modulo);
     String allegati_file=allegati_email.toString().replaceAll(percorso_tomcat, "");
     id_soggetti_selezionati="_"+id_soggetti_selezionati.replaceAll(",", "__")+"_";
     
@@ -87,7 +88,8 @@
             Utility.getIstanza().query("UPDATE richieste_righe SET log=CONCAT(log,'<br>',"+Utility.is_null(log)+"),data_ultimo_invio=NOW() WHERE id="+mappa_soggetto_richieste.get(s.getId()).getId());
         }
         ArrayList<String> destinatari=new ArrayList<String>(Arrays.asList(email_invio.split(",")));
-        Mail.invia_mail_allegati(Config.mittente_email, destinatari, oggetto, email_testo, allegati_email);
+        //Mail.invia_mail_allegati(Config.mittente_email, destinatari, oggetto, email_testo, allegati_email);
+        Mail.invia_mail_allegati("Smtp6.ilger.com","","Dimauroog5392","54LKJ7j3df53fRCFa",false,false,"info@dimauroog.it", destinatari, oggetto, email_testo, allegati_email);		
     }
     
     

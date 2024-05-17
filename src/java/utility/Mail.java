@@ -107,7 +107,7 @@ public class Mail {
             props.put("mail.smtp.auth", "true");
             props.put("mail.debug", "true");
             //props.put("mail.smtp.starttls.enable", "true");
-            props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");   
+            //props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");   
             
             
             Session session2 = Session.getInstance(props,new javax.mail.Authenticator() {  
@@ -173,4 +173,89 @@ public class Mail {
         return msg;    
     }
      
+    public static String invia_mail_allegati(String smtp, String porta, String nome_utente, String password,boolean ssl, boolean starttls,String mitt,ArrayList<String> destinatari,String oggetto_mail,String testo_mail,ArrayList<String> allegati){
+        
+        System.out.println("invia_mail_allegati\n"
+                + "mittentente =>"+mitt+"\n"
+                + "destinatari =>"+destinatari.toString()+"\n"
+                + "oggetto =>"+oggetto_mail+"\n"
+                + "testo_mail =>"+testo_mail+"\n"
+                + "allegati =>"+allegati.toString()+"\n");
+        
+            String errori="";
+            String msg="";
+            
+            
+        try {
+            Properties props = new Properties();
+            
+            props.put("mail.smtp.host", smtp);     
+            props.put("mail.smtp.port", porta);            
+            props.put("mail.smtp.auth", "true");
+            props.put("mail.debug", "true");
+            if(starttls)
+                props.put("mail.smtp.starttls.enable", "true");
+            if(ssl)
+                props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");   
+            
+            Session session2 = Session.getInstance(props,new javax.mail.Authenticator() {  
+            protected PasswordAuthentication getPasswordAuthentication() {  
+                return new PasswordAuthentication(nome_utente,password);  
+               }  
+             });  
+             
+            if(smtp.equals("") || nome_utente.equals("") || password.equals(""))
+                errori=errori+"La configurazione dell'indirizzo email per l'invio del PDF non è corretta (Setting -> Documenti)\n";
+           
+            MimeMessage message = new MimeMessage(session2);
+            message.setSubject(oggetto_mail);                        
+            InternetAddress fromAddress = new InternetAddress(mitt);
+            message.setFrom(fromAddress);
+           
+            // Aggiunge il testo            
+            BodyPart messageBodyPart_testo = new MimeBodyPart();            
+                        
+            messageBodyPart_testo.setContent(testo_mail,"text/html; charset=utf-8");
+            
+            // Allega il file
+            Multipart multipart = new MimeMultipart();  
+            multipart.addBodyPart(messageBodyPart_testo);  
+            if(allegati.size()>0){
+                
+                for(String filename:allegati){
+                    DataSource source = new FileDataSource(filename);
+                    MimeBodyPart messageBodyPart_allegato  = new MimeBodyPart(); 
+                    messageBodyPart_allegato.setDataHandler(new DataHandler(source));
+                    
+                    String nome_file=filename.substring(filename.lastIndexOf("/")+1);
+                    nome_file=nome_file.substring(nome_file.lastIndexOf("\\")+1);
+                    messageBodyPart_allegato.setFileName(nome_file);
+                    
+                    
+                    multipart.addBodyPart(messageBodyPart_allegato);  
+                }                 
+            }
+            message.setContent(multipart ); 
+                        
+            msg="Email inviata correttamente a:\n";
+    
+            for(String dest:destinatari){
+                InternetAddress toAddress = new InternetAddress(dest);
+                message.addRecipient(Message.RecipientType.TO, toAddress);
+                msg=msg+dest+"; ";
+            }           
+            if(errori.equals("")){                                
+                Transport.send(message);                
+            }else{
+                msg="Impossibile inviare le e-mail! Si sono verificati i seguenti errori:\n"+errori;       
+            }                        
+            
+        }
+        catch (MessagingException ex) {
+            msg=ex.toString();
+            if(msg.contains("535"))
+                msg=errori+"Verifica i dati di accesso (autenticazione fallita) dell'email per l'invio del PDF (Setting -> Documenti)\n";
+        }  
+        return msg;    
+    }
 }
