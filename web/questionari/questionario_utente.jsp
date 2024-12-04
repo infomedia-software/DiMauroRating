@@ -13,6 +13,7 @@
 <% 
 Utente utente=(Utente)session.getAttribute("utente");
 String last_focus=Utility.elimina_null(request.getParameter("last_focus")); 
+String scroll=Utility.elimina_null(request.getParameter("scroll")); 
 String id_questionario_utente=Utility.elimina_null(request.getParameter("id_questionario_utente")); 
 String id_questionario=Utility.elimina_null(request.getParameter("id_questionario")); 
 // se il questionario dell'utente ancora non è presente lo creo in stato bozza (b)
@@ -89,10 +90,14 @@ Map<String,String> mappa_domande_risposte=GestioneQuestionari.getIstanza().mappa
                 var campo_da_modificare=inField.name;
                 var new_valore=encodeURIComponent(String(inField.value));
                 var refresh=inField.getAttribute("refresh");
+                var container=document.getElementById("container");
+                var scroll=container.scrollTop;
+                $("#scroll").val(scroll);
                 mostra_loader("");
                 if(inField.type=="checkbox"){
+                    var valore=new_valore;
                     new_valore=checkbox_selezionate(id_risposta);                    
-                    if(new_valore.toLowerCase().includes("no")){
+                    if(valore.toLowerCase()==("no") && inField.checked){
                         new_valore="no";
                     }
                 }
@@ -161,7 +166,8 @@ Map<String,String> mappa_domande_risposte=GestioneQuestionari.getIstanza().mappa
                      
                 });*/
                 var last_focus=$("#last_focus").val();
-                location.href='<%=Utility.url%>/questionari/questionario_utente.jsp?id_questionario_utente=<%=id_questionario_utente%>&id_questionario=<%=id_questionario%>&last_focus='+last_focus;
+                var scroll=$("#scroll").val();
+                location.href='<%=Utility.url%>/questionari/questionario_utente.jsp?id_questionario_utente=<%=id_questionario_utente%>&id_questionario=<%=id_questionario%>&last_focus='+last_focus+"&scroll="+scroll;
             }
         
             function modifica_allegato(inField,id_allegato){
@@ -252,12 +258,23 @@ Map<String,String> mappa_domande_risposte=GestioneQuestionari.getIstanza().mappa
             }
             
             $(function(){
+                $('#container').scrollTop("<%=scroll%>");  
                 $( document ).on( "focusin", "input, select", function() {
                     $("#last_focus").val(this.id);
                 });
                 $("#<%=last_focus%>").focus();
             })
         </script>
+        <style>
+            html, body {
+                height: 100%; /* Imposta l'altezza del body e dell'html */
+                margin: 0; /* Rimuove il margine di default */
+            }
+            #container {
+                height: 100%; /* Il container prende l'altezza del suo genitore (html e body) */
+                overflow-y: scroll; /* Abilita lo scroll verticale */
+            }
+        </style>
     </head>
     <body>
     
@@ -330,6 +347,7 @@ Map<String,String> mappa_domande_risposte=GestioneQuestionari.getIstanza().mappa
                 <div class="height-10"></div>
             <%}%>
             <input type='hidden' id='last_focus' readonly="true" tabindex="-1" value="<%=last_focus%>">
+            <input type='hidden' id='scroll' readonly="true" tabindex="-1" value="<%=scroll%>" >
             <div id="div_qu">
                 <div id="div_qu_inner">
                     <table class="tabella">
@@ -372,10 +390,14 @@ Map<String,String> mappa_domande_risposte=GestioneQuestionari.getIstanza().mappa
                                     <% if(r.getDomanda().is_checkbox()){%>
                                         <input type="hidden" domanda="<% if(utente.is_italiano()){%><%=r.getDomanda().getTesto_ita()%><%}else{%><%=r.getDomanda().getTesto_ita()%><%}%>" id="<%=r.getId()%>" class="risposta" id="<%=r.getId()%>" name="risposta" value="<%=r.getRisposta()%>">
                                     <% String valori[]=r.getDomanda().getValori().split(",");
-                                        for(String v:valori){%>
+                                        for(String v:valori){
+                                            String valore="_"+v.toLowerCase()+"_";
+                                            String da_confrontare="_"+r.getRisposta().toLowerCase().replace(",", "__")+"_";
+                                    %>
+                                        
                                             <%=v%> 
                                             <input type="checkbox" id="<%=r.getId()%>" name="risposta" class="checkbox_<%=r.getId()%>" onchange="modifica_risposta('<%=r.getId()%>',this)" value="<%=v%>" 
-                                                <% if(r.getRisposta().toLowerCase().contains(v.toLowerCase())){%> checked="true"<%}%>
+                                                <% if(da_confrontare.contains(valore)){%> checked="true"<%}%>
                                                 <% if(r.getRisposta().toLowerCase().equals("no") && !v.toLowerCase().equals("no") ){%>disabled="true"<%}%>>
                                         <%}%>
                                     <%}%>
