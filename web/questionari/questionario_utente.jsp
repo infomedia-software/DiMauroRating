@@ -392,7 +392,7 @@ Map<String,String> mappa_domande_risposte=GestioneQuestionari.getIstanza().mappa
                                         
                                         <select name="risposta" domanda="<% if(utente.is_italiano()){%><%=r.getDomanda().getTesto_ita()%><%}else{%><%=r.getDomanda().getTesto_ita()%><%}%>" id="<%=r.getId()%>" onchange="modifica_risposta('<%=r.getId()%>',this)">
                                             <option value="">Seleziona la risposta</option>
-                                            <option value="si" <% if(r.getRisposta().equals("si")){%>selected="true"<%}%>>si</option>
+                                            <option value="si" <% if(r.getRisposta().equals("si")){%>selected="true"<%}%>><% if(utente.is_inglese()){%>yes<%}else{%>si<%}%></option>
                                             <option value="no" <% if(r.getRisposta().equals("no")){%>selected="true"<%}%>>no</option>
                                             <option value="n/a" <% if(r.getRisposta().equals("n/a")){%>selected="true"<%}%>>n/a</option>
                                         </select>
