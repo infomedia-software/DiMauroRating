@@ -91,7 +91,10 @@ Map<String,String> mappa_domande_risposte=GestioneQuestionari.getIstanza().mappa
                 var refresh=inField.getAttribute("refresh");
                 mostra_loader("");
                 if(inField.type=="checkbox"){
-                    new_valore=checkbox_selezionate(id_risposta);
+                    new_valore=checkbox_selezionate(id_risposta);                    
+                    if(new_valore.toLowerCase().includes("no")){
+                        new_valore="no";
+                    }
                 }
                 if(campo_da_modificare=="valutazione"){
                     var valutazione=parseFloat(new_valore);
@@ -341,7 +344,7 @@ Map<String,String> mappa_domande_risposte=GestioneQuestionari.getIstanza().mappa
                             <%}%>
                         </tr>
                         <% for(Risposta r:risposte){%>
-                            <% if(r.getDomanda().getVisibile_id().equals("") || mappa_domande_risposte.get(r.getDomanda().getVisibile_id()).equals(r.getDomanda().getVisibile_condizione())){%>
+                            <% if(r.getDomanda().getVisibile_id().equals("") || mappa_domande_risposte.get(r.getDomanda().getVisibile_id()).contains(r.getDomanda().getVisibile_condizione())){%>
                             <tr>
                                 <td>
                                     <%=r.getDomanda().getSezione().getNr()%>
@@ -367,10 +370,13 @@ Map<String,String> mappa_domande_risposte=GestioneQuestionari.getIstanza().mappa
                                         <input type="number" domanda="<% if(utente.is_italiano()){%><%=r.getDomanda().getTesto_ita()%><%}else{%><%=r.getDomanda().getTesto_ita()%><%}%>" id="<%=r.getId()%>" name="risposta" onchange="modifica_risposta('<%=r.getId()%>',this)" value="<%=r.getRisposta()%>">
                                     <%}%>
                                     <% if(r.getDomanda().is_checkbox()){%>
-                                        <input type="text" domanda="<% if(utente.is_italiano()){%><%=r.getDomanda().getTesto_ita()%><%}else{%><%=r.getDomanda().getTesto_ita()%><%}%>" id="<%=r.getId()%>" class="risposta" id="<%=r.getId()%>" name="risposta" value="<%=r.getRisposta()%>">
+                                        <input type="hidden" domanda="<% if(utente.is_italiano()){%><%=r.getDomanda().getTesto_ita()%><%}else{%><%=r.getDomanda().getTesto_ita()%><%}%>" id="<%=r.getId()%>" class="risposta" id="<%=r.getId()%>" name="risposta" value="<%=r.getRisposta()%>">
                                     <% String valori[]=r.getDomanda().getValori().split(",");
                                         for(String v:valori){%>
-                                            <%=v%> <input type="checkbox" id="<%=r.getId()%>" name="risposta" class="checkbox_<%=r.getId()%>" onchange="modifica_risposta('<%=r.getId()%>',this)" value="<%=v%>" <% if(r.getRisposta().contains(v)){%> checked="true"<%}%>>
+                                            <%=v%> 
+                                            <input type="checkbox" id="<%=r.getId()%>" name="risposta" class="checkbox_<%=r.getId()%>" onchange="modifica_risposta('<%=r.getId()%>',this)" value="<%=v%>" 
+                                                <% if(r.getRisposta().toLowerCase().contains(v.toLowerCase())){%> checked="true"<%}%>
+                                                <% if(r.getRisposta().toLowerCase().equals("no") && !v.toLowerCase().equals("no") ){%>disabled="true"<%}%>>
                                         <%}%>
                                     <%}%>
                                     <% if(r.getDomanda().is_select()){%>
@@ -388,6 +394,7 @@ Map<String,String> mappa_domande_risposte=GestioneQuestionari.getIstanza().mappa
                                             <option value="">Seleziona la risposta</option>
                                             <option value="si" <% if(r.getRisposta().equals("si")){%>selected="true"<%}%>>si</option>
                                             <option value="no" <% if(r.getRisposta().equals("no")){%>selected="true"<%}%>>no</option>
+                                            <option value="n/a" <% if(r.getRisposta().equals("n/a")){%>selected="true"<%}%>>n/a</option>
                                         </select>
                                     <%}%>
                                     <% if(r.getDomanda().is_allegato()){%>

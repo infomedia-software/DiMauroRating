@@ -1,7 +1,7 @@
 <%@page import="utility.Utility"%>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
-<link rel="stylesheet" type="text/css" href="<%=Utility.url%>/css/stile_dimauro_rating.css">
+<link rel="stylesheet" type="text/css" href="<%=Utility.url%>/css/stile_dimauro_rating2.0.css">
 <link rel="stylesheet" type="text/css" media="only screen and (max-width: 1023px)" href="<%=Utility.url%>/css/stile_dimauro_rating_responsive.css" />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700|Roboto:300,400,500,600,700">        <!--end::Fonts -->
 

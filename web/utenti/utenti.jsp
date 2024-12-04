@@ -67,6 +67,7 @@
         
             <h1>                
                 Fornitori
+                <button class="pulsante float-right" onclick="nuovo_utente()"><img src="<%=Utility.url%>/images/add.png">Nuovo</button>
             </h1>
             <div class="box">
                 <div class="etichetta float-right">Importa csv (<a href="importa.csv">Scarica file di esempio</a>)</div>
