@@ -59,9 +59,9 @@
         
         <%if(allegati.size()==0){%>
             <div class="messaggio">Nessun Allegato presente</div>
-            <input type='hidden' class="risposta" name="risposta" domanda="<% if(utente.is_italiano()){%><%=r.getDomanda().getTesto_ita()%><%}else{%><%=r.getDomanda().getTesto_ita()%><%}%>" value="">
+            <input type='hidden' class="risposta" name="risposta" domanda="<%=r.getDomanda().getSezione().getNr()%>.<%=r.getDomanda().getNr()%> <% if(utente.is_italiano()){%>No attachments<%}else{%><%}%>" value="">
         <%}else{%>
-            <input type='hidden' class="risposta" name="risposta" domanda="<% if(utente.is_italiano()){%><%=r.getDomanda().getTesto_ita()%><%}else{%><%=r.getDomanda().getTesto_ita()%><%}%>"  value="si">
+            <input type='hidden' class="risposta" name="risposta" domanda="<%=r.getDomanda().getSezione().getNr()%>.<%=r.getDomanda().getNr()%> <% if(utente.is_italiano()){%><%=r.getDomanda().getTesto_ita()%><%}else{%><%=r.getDomanda().getTesto_eng()%><%}%>"  value="si">
             <table class="tabella">
                 <tr>  
                     <th style="width:50px"></th>

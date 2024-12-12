@@ -42,7 +42,9 @@
 <%if(utente!=null){%>
     <div id="menu">
         <% if(!utente.is_admin_questionari() && !utente.is_admin_richieste()){%>
-            <button class="float-left" onclick="location.href='<%=Utility.url%>/index.jsp'" style="pointer-events: auto;">Questionari</button>
+            <button class="float-left" onclick="location.href='<%=Utility.url%>/index.jsp'" style="pointer-events: auto;">
+                <% if(utente.is_italiano()){%>Questionari<%}else{%>Questionnaires<%}%>
+            </button>
         <%}%>
         <% if(utente.is_admin_questionari()){%>
             <button class="float-left" onclick="location.href='<%=Utility.url%>/questionari/configura_questionari.jsp'" style="pointer-events: auto;">Questionari</button>
@@ -54,10 +56,10 @@
             <button class="float-left" onclick="location.href='<%=Utility.url%>/utenti/utenti.jsp'" style="pointer-events: auto;">Clienti / Fornitori</button>
         <%}%>
         
-        <button class="float-right" onclick="logout()" style="pointer-events: auto;">Esci</button>
+        <button class="float-right" onclick="logout()" style="pointer-events: auto;">Logout</button>
         <div id="user" style="cursor: pointer;" onclick="location.href='<%=Utility.url%>/utenti/utente.jsp?id_utente=<%=utente.getId()%>'">
             <img src="<%=Utility.url%>/images/man.png">
-            Benvenuto <%=utente.getReferente()%>
+            <% if(utente.is_italiano()){%>Benvenuto<%}else{%>Welcome<%}%> <%=utente.getReferente()%>
         </div>
         
     </div>

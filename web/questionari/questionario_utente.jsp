@@ -232,7 +232,11 @@ Map<String,String> mappa_domande_risposte=GestioneQuestionari.getIstanza().mappa
                 if(errore==""){
                     modifica_questionario_utente('<%=id_questionario_utente%>',inField);
                 }else{
-                    errore="Verifica di aver compilato correttamente le seguenti domande:<br>"+errore;
+                    <% if(utente.is_italiano()){%>
+                        errore="Verifica di aver compilato correttamente le seguenti domande:<br>"+errore;
+                    <%}else{%>
+                        errore="Check that you have filled in the following questions correctly:<br>"+errore;
+                    <%}%>
                     $("#errore").html(errore);
                     $("#errore").show();
                 }
@@ -296,9 +300,13 @@ Map<String,String> mappa_domande_risposte=GestioneQuestionari.getIstanza().mappa
                     <%}%>
                 <%}%>
                 <% if(qu.is_bozza()){%>
-                    <div class="tag color_rifiutata float-right">BOZZA</div>
+                <div class="tag color_rifiutata float-right">
+                    <% if(utente.is_italiano()){%>BOZZA<%}else{%>DRAFT<%}%>
+                </div>
                 <%}%>
-                <button class="pulsante_tabella float-right" onclick="window.print()">Stampa</button>
+                <button class="pulsante_tabella float-right" onclick="window.print()">
+                    <% if(utente.is_italiano()){%>Stampa<%}else{%>Print<%}%>
+                </button>
             </h1>
             <% if(qu.getData_ora_valutazione()!=null){
                 Map<String,Double> mappa_valutazioni=GestioneQuestionari.getIstanza().mappa_valutazioni_sezioni(id_questionario_utente);
@@ -382,13 +390,13 @@ Map<String,String> mappa_domande_risposte=GestioneQuestionari.getIstanza().mappa
                                 </td>
                                 <td id="risposta_<%=r.getId()%>" <% if((!utente.getId().equals(qu.getUtente().getId()) && !utente.is_admin_questionari()) || qu.getData_ora_invio()!=null){%> style="pointer-events: none;" <%}%>>
                                     <% if(r.getDomanda().is_testo()){%>
-                                        <input type="text" domanda="<% if(utente.is_italiano()){%><%=r.getDomanda().getTesto_ita()%><%}else{%><%=r.getDomanda().getTesto_ita()%><%}%>" id="<%=r.getId()%>" name="risposta" onchange="modifica_risposta('<%=r.getId()%>',this)" value="<%=r.getRisposta()%>">
+                                        <input type="text" domanda="<% if(utente.is_italiano()){%><%=r.getDomanda().getTesto_ita()%><%}else{%><%=r.getDomanda().getTesto_eng()%><%}%>" id="<%=r.getId()%>" name="risposta" onchange="modifica_risposta('<%=r.getId()%>',this)" value="<%=r.getRisposta()%>">
                                     <%}%>
                                     <% if(r.getDomanda().is_numero()){%>
-                                        <input type="number" domanda="<% if(utente.is_italiano()){%><%=r.getDomanda().getTesto_ita()%><%}else{%><%=r.getDomanda().getTesto_ita()%><%}%>" id="<%=r.getId()%>" name="risposta" onchange="modifica_risposta('<%=r.getId()%>',this)" value="<%=r.getRisposta()%>">
+                                        <input type="number" domanda="<% if(utente.is_italiano()){%><%=r.getDomanda().getTesto_ita()%><%}else{%><%=r.getDomanda().getTesto_eng()%><%}%>" id="<%=r.getId()%>" name="risposta" onchange="modifica_risposta('<%=r.getId()%>',this)" value="<%=r.getRisposta()%>">
                                     <%}%>
                                     <% if(r.getDomanda().is_checkbox()){%>
-                                        <input type="hidden" domanda="<% if(utente.is_italiano()){%><%=r.getDomanda().getTesto_ita()%><%}else{%><%=r.getDomanda().getTesto_ita()%><%}%>" id="<%=r.getId()%>" class="risposta" id="<%=r.getId()%>" name="risposta" value="<%=r.getRisposta()%>">
+                                        <input type="hidden" domanda="<% if(utente.is_italiano()){%><%=r.getDomanda().getTesto_ita()%><%}else{%><%=r.getDomanda().getTesto_eng()%><%}%>" id="<%=r.getId()%>" class="risposta" id="<%=r.getId()%>" name="risposta" value="<%=r.getRisposta()%>">
                                     <% String valori[]=r.getDomanda().getValori().split(",");
                                         for(String v:valori){
                                             String valore="_"+v.toLowerCase()+"_";
@@ -396,15 +404,15 @@ Map<String,String> mappa_domande_risposte=GestioneQuestionari.getIstanza().mappa
                                     %>
                                         
                                             <%=v%> 
-                                            <input type="checkbox" id="<%=r.getId()%>" name="risposta" class="checkbox_<%=r.getId()%>" onchange="modifica_risposta('<%=r.getId()%>',this)" value="<%=v%>" 
+                                            <input type="checkbox" id="<%=r.getId()%>" name="risposta" class="checkbox_<%=r.getId()%>" onchange="modifica_risposta('<%=r.getId()%>',this)" value="<%=v%>" domanda="<% if(utente.is_italiano()){%><%=r.getDomanda().getTesto_ita()%><%}else{%><%=r.getDomanda().getTesto_eng()%><%}%>" 
                                                 <% if(da_confrontare.contains(valore)){%> checked="true"<%}%>
                                                 <% if(r.getRisposta().toLowerCase().equals("no") && !v.toLowerCase().equals("no") ){%>disabled="true"<%}%>>
                                         <%}%>
                                     <%}%>
                                     <% if(r.getDomanda().is_select()){%>
                                         <% String valori[]=r.getDomanda().getValori().split(",");%>
-                                        <select name="risposta" domanda="<% if(utente.is_italiano()){%><%=r.getDomanda().getTesto_ita()%><%}else{%><%=r.getDomanda().getTesto_ita()%><%}%>" id="<%=r.getId()%>" onchange="modifica_risposta('<%=r.getId()%>',this)">
-                                            <option value="">Seleziona la risposta</option>
+                                        <select name="risposta" domanda="<% if(utente.is_italiano()){%><%=r.getDomanda().getTesto_ita()%><%}else{%><%=r.getDomanda().getTesto_eng()%><%}%>" id="<%=r.getId()%>" onchange="modifica_risposta('<%=r.getId()%>',this)">
+                                            <option value=""><% if(utente.is_italiano()){%>Seleziona la risposta<%}else{%>Select answer<%}%></option>
                                             <%for(String v:valori){%>
                                                 <option value="<%=v%>" <% if(r.getRisposta().equals(v)){%>selected="true"<%}%>><%=v%></option>
                                             <%}%>
@@ -412,8 +420,8 @@ Map<String,String> mappa_domande_risposte=GestioneQuestionari.getIstanza().mappa
                                     <%}%>
                                     <% if(r.getDomanda().is_si_no()){%>
                                         
-                                        <select name="risposta" domanda="<% if(utente.is_italiano()){%><%=r.getDomanda().getTesto_ita()%><%}else{%><%=r.getDomanda().getTesto_ita()%><%}%>" id="<%=r.getId()%>" onchange="modifica_risposta('<%=r.getId()%>',this)">
-                                            <option value="">Seleziona la risposta</option>
+                                        <select name="risposta" domanda="<% if(utente.is_italiano()){%><%=r.getDomanda().getTesto_ita()%><%}else{%><%=r.getDomanda().getTesto_eng()%><%}%>" id="<%=r.getId()%>" onchange="modifica_risposta('<%=r.getId()%>',this)">
+                                            <option value=""><% if(utente.is_italiano()){%>Seleziona la risposta<%}else{%>Select answer<%}%></option>
                                             <option value="si" <% if(r.getRisposta().equals("si")){%>selected="true"<%}%>><% if(utente.is_inglese()){%>yes<%}else{%>si<%}%></option>
                                             <option value="no" <% if(r.getRisposta().equals("no")){%>selected="true"<%}%>>no</option>
                                             <option value="n/a" <% if(r.getRisposta().equals("n/a")){%>selected="true"<%}%>>n/a</option>
@@ -451,7 +459,13 @@ Map<String,String> mappa_domande_risposte=GestioneQuestionari.getIstanza().mappa
                     </table>
                     <div class="box" id="errore" style="display: none;border:1px solid red;"></div>
                     <% if(qu.getData_ora_invio()==null){%>
-                        <button class="pulsante float-right" name="stato" value="1" onclick="controlla_risposte('<%=id_questionario_utente%>',this);" >Invia Questionario</button>
+                        <button class="pulsante float-right" name="stato" value="1" onclick="controlla_risposte('<%=id_questionario_utente%>',this);" >
+                            <% if(utente.is_italiano()){%>
+                                Invia Questionario
+                            <%}else{%>
+                                Submit
+                            <%}%>
+                        </button>
                     <%}%>
                     <% if(qu.getData_ora_invio()!=null && qu.getData_ora_valutazione()==null && utente.is_admin_questionari()){%>
                         <button class="pulsante float-right"  onclick="salva_valutazione('<%=id_questionario_utente%>',this)" >Salva Valutazione</button>

@@ -27,9 +27,15 @@
         </script>
     </head>
     <body>
-    <h1>Questionari</h1>
+    <h1>
+        <% if(utente.is_italiano()){%>
+            Questionari
+        <%}else{%>
+            Questionnaires
+        <%}%>
+    </h1>
     <div class="box">
-        <input type="text" id="search" class="ricerca float-right" placeholder="Ricerca...">
+        <input type="text" id="search" class="ricerca float-right" placeholder="<% if(utente.is_italiano()){%>Ricerca...<%}else{%>Search....<%}%>">
         <table class="tabella" id="tabella">
             <tr>
                 <th style="width: 130px;"></th>
