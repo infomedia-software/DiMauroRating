@@ -278,6 +278,17 @@ Map<String,String> mappa_domande_risposte=GestioneQuestionari.getIstanza().mappa
                 height: 100%; /* Il container prende l'altezza del suo genitore (html e body) */
                 overflow-y: scroll; /* Abilita lo scroll verticale */
             }
+            
+            @media print {
+                #container {
+                    display: block !important;
+                    visibility: visible !important;
+                    width: 100%;
+                    height: auto;
+                    margin: 0;
+                }
+            }
+
         </style>
     </head>
     <body>
