@@ -109,56 +109,56 @@
 
                     <form id="form_registrati">
                         
-                        <div class='etichetta'>Ragione Sociale</div>
+                        <div class='etichetta'>Ragione Sociale - Company Name</div>
                         <div class='valore'>
                             <input type='text' id='ragione_sociale' name='ragione_sociale' >
                             <div class="height-10"></div>
                         </div>
                         <div class="clear"></div>
                         <div class="width-50 float-left">
-                            <div class='etichetta'>P.Iva / C.F.</div>
+                            <div class='etichetta'>P.Iva o C.F. / VAT number</div>
                             <div class='valore'>
                                 <input type='text' id='piva' name='piva' >
                             </div>
                         </div>
                         <div class="width-50 float-left">
-                            <div class='etichetta'>Email</div>
+                            <div class='etichetta'>Indrizzo Email / Mail address</div>
                             <div class='valore'>
                                 <input type='text' id='email' name='email' >
                             </div>
                         </div>
                         <div class="clear"></div>
                         <div class="width-50 float-left">
-                            <div class='etichetta'>Referente</div>
+                            <div class='etichetta'>Referente / Referent</div>
                             <div class='valore'>
                                 <input type='text' id='referente' name='referente' >
                             </div>
                         </div>
                         <div class="width-50 float-left">
-                            <div class='etichetta'>Ruolo</div>
+                            <div class='etichetta'>Ruolo / Role</div>
                             <div class='valore'>
                                 <input type='text' id='ruolo' name='ruolo' >
                             </div>
                         </div>
                         <div class="width-50 float-left">
-                            <div class='etichetta'>Indirizzo</div>
+                            <div class='etichetta'>Indirizzo / Address</div>
                             <div class='valore'>
                                 <input type='text' id='indirizzo' name='indirizzo' >
                             </div>
                         </div>
                         <div class="width-25 float-left">
-                            <div class='etichetta'>Comune</div>
+                            <div class='etichetta'>Comune / City</div>
                             <div class='valore'>
                                 <input type='text' id='comune' name='comune' >
                             </div>
                         </div>
                         <div class="width-25 float-left">
-                            <div class='etichetta'>Provincia</div>
+                            <div class='etichetta'>Provincia / State</div>
                             <div class='valore'>
                                 <input type='text' id='provincia' name='provincia'>
                             </div>
                         </div>
-                        <div class="etichetta">Lingua</div>
+                        <div class="etichetta">Lingua / Language</div>
                         <div class="valore">
                             <select name="lingua">
                                 <option value="<%=Utente.LINGUA_IT%>">Italiano</option>
@@ -166,7 +166,7 @@
                             </select>
                         </div>
                         <div class="height-10"></div>
-                        <button class="pulsante float-right" type="button" onclick="registrati()">Registrati</button>
+                        <button class="pulsante float-right" type="button" onclick="registrati()">Registrati / Sign in </button>
                     </form>
                 </div>
                 <div class="clear"></div>

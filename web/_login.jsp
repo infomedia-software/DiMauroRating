@@ -117,7 +117,7 @@
     <div id="div_login">
 
         <form id="form_login">
-            <div class='etichetta'>Nome Utente</div>
+            <div class='etichetta'>Nome Utente / Username</div>
             <div class='valore'>
                 <input type='text' id='nome_utente' name='nome_utente' placeholder="Inserisci il nome utente..." >
                 <div class="height-10"></div>
@@ -127,13 +127,13 @@
                 <div class='valore'>
                     <input type='password' id='password' name='password'>
                 </div>
-                <button type="button" class="pulsante margin-auto" onclick="login()">Accedi</button>
+                <button type="button" class="pulsante margin-auto" onclick="login()">Login</button>
             </div>
             <div class="height-10"></div>
             <div id="registrati" style="text-align: center;">
-                <button type="button" class="pulsante color_evasa margin-auto" onclick="location.href='registrati.jsp'">Registrati</button>
+                <button type="button" class="pulsante color_evasa margin-auto" onclick="location.href='registrati.jsp'">Registrati / Sign in</button>
                 <br/>
-                <a href="#" onclick="password_dimenticata()">Password Dimenticata?</a>
+                <a href="#" onclick="password_dimenticata()">Password Dimenticata? Forgot Password?</a>
             </div>
             <div id="no" class="campi" style="display: none;">
                 <div class='errore'>Nessun utente presente nel sistema con il nome utente inserito</div>
