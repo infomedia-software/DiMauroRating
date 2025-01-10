@@ -70,7 +70,9 @@
                     <th style="width: 180px;">Situazione</th>
                 </tr>
                 <tbody>
-            <%  for(QuestionarioUtente q:lista){%>
+            <%  for(QuestionarioUtente q:lista){
+                    if(!q.getStato().equals("-1")){
+            %>
                 <tr>
                     <td>
                         <% if(q.getData_ora_valutazione()!=null || q.getData_ora_invio()==null){%>
@@ -109,6 +111,7 @@
                         <%}%>
                     </td>
                 </tr>
+                <%}%>
           <%}%>
                 </tbody>
             </table>

@@ -32,9 +32,9 @@
     ArrayList<String> destinatari=new ArrayList<String>();
     ArrayList<String> allegati=new ArrayList<String>();
     destinatari.add(email);
-    String testo_email="Gentile "+referente+",<br>grazie per esserti registrato al portale Rating Fornitori Di Mauro Flexible Packaging.<br>Di seguito la password di accesso: "+password+".<br>NB: la password potrà essere modificata nella sezione profilo in qualsiasi momento.<br>Saluti<br>Di Mauro Flexible Packaging.";
+    String testo_email="Gentile "+referente+",<br>grazie per esserti registrato al portale Rating Fornitori Di Mauro Flexible Packaging.<br>Di seguito il:<br>- nome utente: "+email+"<br>- password di accesso: "+password+"<br>NB: la password potrà essere modificata nella sezione profilo in qualsiasi momento.<br>Saluti<br>Di Mauro Flexible Packaging.";
     if(lingua.equals(Utente.LINGUA_EN)){
-        testo_email="Dear "+referente+"<br>,Thank you for registering on the Di Mauro Flexible Packaging Supplier Rating portal.<br>Below is the login password: "+password+".<br>NB: the password can be changed in the profile section at any time.<br>Greetings<br>By Mauro Flexible Packaging.";
+        testo_email="Dear "+referente+"<br>,Thank you for registering on the Di Mauro Flexible Packaging Supplier Rating portal.<br>Below is the login <br>- username: "+email+"<br>- password: "+password+"<br>NB: the password can be changed in the profile section at any time.<br>Greetings<br>By Mauro Flexible Packaging.";
     }
     Mail.invia_mail_allegati(Config.mittente_email, destinatari, "Registrazione Portale Rating Fornitori - Di Mauro Flexible Packaging", testo_email,allegati);
 %>

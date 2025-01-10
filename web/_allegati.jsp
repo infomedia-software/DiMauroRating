@@ -71,12 +71,12 @@
                 <%for(Allegato allegato:allegati){%>
                     <tr>                
                         <td>
-                            <a href='<%=Utility.url%>/allegati/<%=cartella_upload%>/<%=allegato.getUrl()%>' class="pulsante_small" target="_blank">                        
+                            <a href='<%=Utility.url%>/allegati/<%=cartella_upload%>/<%=allegato.getUrl()%>' class="pulsante_small" target="_blank" style="pointer-events: auto">                        
                                 <img src="<%=Utility.img_link%>" alt="edit">
                             </a>
                         </td>
                         <td style="overflow: hidden;">
-                            <a href='<%=Utility.url%>/allegati/<%=cartella_upload%>/<%=allegato.getUrl()%>' target="_blank">                        
+                            <a href='<%=Utility.url%>/allegati/<%=cartella_upload%>/<%=allegato.getUrl()%>' target="_blank" style="pointer-events: auto">                        
                                 <%=allegato.getUrl()%>
                             </a>
                         </td>                        
