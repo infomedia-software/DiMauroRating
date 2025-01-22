@@ -87,7 +87,7 @@
                     location.reload();
                 },
                 error: function(){
-                    alert("IMPOSSIBILE EFFETTUARE L'OPERAZIONE verifica_utente");
+                    alert("IMPOSSIBILE EFFETTUARE L'OPERAZIONE password dimenticata");
                 }
             });
             
