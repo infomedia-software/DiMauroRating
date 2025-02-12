@@ -102,6 +102,7 @@ public class GestioneUtenti {
                 utente.setNome_utente(rs.getString("nome_utente"));
                 utente.setPassword(rs.getString("password"));
                 utente.setRuolo(rs.getString("ruolo"));
+                utente.setCliente_fornitore(rs.getString("cliente_fornitore"));
                 utente.setNote(rs.getString("note"));
                 utente.setLingua(rs.getString("lingua"));
                 utente.setPiva(rs.getString("piva"));

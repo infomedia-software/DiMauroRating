@@ -39,6 +39,14 @@
                         </div>
                         <div class="clear"></div>
                         <% if(utente_sessione.is_admin_richieste()){%>
+                            <div class='etichetta'>Abilita per invio Mail</div>
+                            <div class='valore'>
+                                <select id='cliente_fornitore'  onchange="modifica_utente(<%=id_utente%>,this);">
+                                    <option value='' <% if(utente.getCliente_fornitore().equals("")){%>selected="true"<%}%>>No</option>
+                                    <option value='f' <% if(utente.is_fornitore()){%>selected="true"<%}%>>Si</option>
+                                </select>
+                            </div>
+                        
                             <div class='etichetta'>Codice</div>
                             <div class='valore'>
                                 <input type='text' id='codice' onchange="modifica_utente(<%=id_utente%>,this);" value="<%=utente.getCodice()%>">

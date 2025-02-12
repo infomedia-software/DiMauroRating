@@ -216,7 +216,7 @@
                                 if(mappa_soggetto_richieste.get(s.getId())!=null)
                                     rr=mappa_soggetto_richieste.get(s.getId());
                                 if(risposto.equals("") || (risposto.equals("si") && !rr.getData_risposta_it().equals("")) || (risposto.equals("no") && rr.getData_risposta_it().equals("")) ){
-                                    if(!s.getEmail_principale().equals("")){
+                                    if(!s.getEmail_principale().equals("") || !s.getEmail().equals("")){
                             %>
                                     <tr>
                                         <td>
@@ -225,10 +225,19 @@
                                         <td><%=s.getCodice()%></td>
                                         <td><a href="<%=Utility.url%>/utenti/utente.jsp?id_utente=<%=s.getId()%>" target="_blank"><%=s.getRagione_sociale()%></a></td>
                                         <td>
-                                            <input type="text" value="<%=s.getEmail_principale()%>" id="email_principale" onchange="modifica_utente('<%=s.getId()%>',this)">
+                                            <%  String email_principale=s.getEmail_principale();
+                                                boolean altre_mail=true;
+                                                if(email_principale.equals("")){
+                                                    email_principale=s.getEmail();
+                                                    altre_mail=false;
+                                                }
+                                                 %>
+                                                <input type="text" value="<%=email_principale%>" id="email_principale" onchange="modifica_utente('<%=s.getId()%>',this)">
+                                            
                                         </td>
                                         <td>
-                                            <% String[] emails=s.getEmail().split(",");
+                                            <%  if(altre_mail){
+                                                String[] emails=s.getEmail().split(",");
                                                 int i=0;
                                                 for(String email:emails){
                                                     if(!email.equals("")){%>
@@ -240,6 +249,7 @@
                                                     </div>
                                                     <div class="clear"></div>
                                                 <%i++;}%>
+                                            <%}%>
                                             <%}%>
                                         </td>
                                         <td><%=rr.getData_ultimo_invio_it()%></td>
