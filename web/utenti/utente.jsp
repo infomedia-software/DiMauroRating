@@ -26,9 +26,9 @@
             
             <h1>                                                     
                 <%=utente.getRagione_sociale()%>
-               <% if(utente_sessione.is_admin_questionari()){%>
-                    <button class="pulsante_tabella float-right" onclick="modifica_utente(<%=id_utente%>,this);" id="stato" value="-1"><img src="<%=Utility.img_delete%>">Cancella</button>
-                <%}%>
+               
+                <button class="pulsante_tabella float-right" onclick="modifica_utente(<%=id_utente%>,this);" id="stato" value="-1"><img src="<%=Utility.img_delete%>">Cancella</button>
+               
             </h1>
                 <div class="box">
                     
