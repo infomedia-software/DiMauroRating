@@ -67,7 +67,7 @@
             <div class="box">
                 <div class="etichetta">File da controfirmare</div>
                 <div class="valore">
-                <span><a href="<%=Utility.url%>/allegati/<%=rr.getRichiesta().getFile_risposta()%>" target="_blank">Modulo Allegato (<%=rr.getRichiesta().getFile_risposta()%>)</a></span>
+                <span><a href="<%=Utility.url%>/allegati/<%=id_richiesta%>/<%=rr.getRichiesta().getFile_risposta()%>" target="_blank">Modulo Allegato (<%=rr.getRichiesta().getFile_risposta()%>)</a></span>
                 </div>
             </div>
             <div class="height-10"></div>

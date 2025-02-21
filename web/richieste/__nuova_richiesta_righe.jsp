@@ -72,6 +72,8 @@
         String email_invio="";
         if(id_soggetti_selezionati.contains("_"+s.getId()+"_")){
             email_invio=s.getEmail_principale();
+            if(s.getEmail_principale().equals("") && !s.getEmail().equals(""))
+                email_invio=s.getEmail();
         }
         if(mappa_soggetto_mail.get(s.getId())!=null){
             email_invio=mappa_soggetto_mail.get(s.getId())+","+email_invio;

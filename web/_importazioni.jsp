@@ -128,7 +128,10 @@
         var campo_da_modificare=inField.id;
         var new_valore=encodeURIComponent(String(inField.value));
         var refresh=inField.getAttribute("refresh");
-
+        if(campo_da_modificare=="stato"){
+            if(!confirm("Sei sicuro di voler cancellare?"))
+                return;
+        }
         if(inField.type=="checkbox"){
             if(inField.checked) 
                 new_valore="si"
@@ -142,6 +145,10 @@
             data: "",
             dataType: "html",
             success: function(msg){
+                if(campo_da_modificare=="stato"){
+                    location.href="<%=Utility.url%>/richieste/index.jsp";
+                    return;
+                }
                 if(refresh=="si")
                     location.reload();
             },
