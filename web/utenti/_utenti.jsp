@@ -38,6 +38,13 @@ $(document).ready(function(){
                 <td>
                     <% if(utente.is_admin_richieste()){%><%=utente_temp.getEmail_principale()%><%}%>
                     <% if(utente.is_admin_richieste()){%><%=utente_temp.getEmail()%><%}%>
+                    <% if(utente.is_admin_richieste()){%>
+                        <div class="height-10"></div>
+                         <select id='cliente_fornitore'  onchange="modifica_utente(<%=utente_temp.getId()%>,this);">
+                            <option value='' <% if(utente_temp.getCliente_fornitore().equals("")){%>selected="true"<%}%>>Non Abilitare Invio Mail</option>
+                            <option value='f' <% if(utente_temp.is_fornitore()){%>selected="true"<%}%>>Abilita Invio Mail</option>
+                        </select>
+                    <%}%>
                 </td>
                 <td><%=utente_temp.getPiva()%></td>
             </tr>
