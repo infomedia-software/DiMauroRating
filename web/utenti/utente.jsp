@@ -108,17 +108,16 @@
                             </select>
                         </div>
                         <div class="height-10"></div>
-                        <% if(utente_sessione.is_admin_questionari()){%>
-                            <h3>Dati Accesso</h3>
-                            <div class='etichetta'>Nome Utente</div>
-                            <div class='valore'>
-                                <span><%=utente.getNome_utente()%></span>
-                            </div>
-                            <div class='etichetta'>Password</div>
-                            <div class='valore'>
-                                <input type='text' id='password' onchange="modifica_utente(<%=id_utente%>,this);" value="<%=utente.getPassword()%>">
-                            </div>
-                        <%}%>
+                        <h3>Dati Accesso</h3>
+                        <div class='etichetta'>Nome Utente</div>
+                        <div class='valore'>
+                            <input type='text' id='nome_utente' onchange="modifica_utente(<%=id_utente%>,this);" value="<%=utente.getNome_utente()%>">
+                        </div>
+                        <div class='etichetta'>Password</div>
+                        <div class='valore'>
+                            <input type='text' id='password' onchange="modifica_utente(<%=id_utente%>,this);" value="<%=utente.getPassword()%>">
+                        </div>
+                        
                 </div>
                 <% if(utente_sessione.is_admin_richieste()){%>
                     <div class="box">
