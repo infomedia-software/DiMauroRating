@@ -36,11 +36,11 @@
                 var oggetto=$("#form_invia_mail #oggetto").val();
                 var testo=$("#form_invia_mail #testo").val();
                 var allegati=parseInt($("#form_invia_mail #allegati").val());
-                var modulo=$("#form_invia_mail #modulo").val();
+                //var modulo=$("#form_invia_mail #modulo").val();
                 var id_soggetti=$("#form_invia_mail #id_soggetti").val();
                 var altre_mail=$("#form_invia_mail #altre_mail").val();
-                if(oggetto=="" || testo=="" || allegati==0 || modulo=="" || (id_soggetti=="" && altre_mail=="") ){
-                    alert("Impossibile procedere.\nVerifica di aver inserito l'oggetto, il testo, gli allegati, il modulo e di aver selezionato almeno un'azienda con indirizzo email settato");
+                if(oggetto=="" || testo=="" || allegati==0 || (id_soggetti=="" && altre_mail=="") ){
+                    alert("Impossibile procedere.\nVerifica di aver inserito l'oggetto, il testo, gli allegati e di aver selezionato almeno un'azienda con indirizzo email settato");
                     return;
                 }
                 if(confirm("Sei sicuro di voler inviare le mail alle aziende selezionate?")){
