@@ -6,7 +6,7 @@
 <%
     String id_questionario_utente=Utility.elimina_null(request.getParameter("id_questionario_utente"));
     String id_questionario=Utility.elimina_null(request.getParameter("id_questionario"));
-    Utility.getIstanza().query("DELETE FROM risposte WHERE id_questionario_utente="+id_questionario_utente);
+    //Utility.getIstanza().query("DELETE FROM risposte WHERE id_questionario_utente="+id_questionario_utente);
     ArrayList<Domanda> domande=GestioneQuestionari.getIstanza().ricerca_domande(" domande.id_questionario="+id_questionario);
     if(domande.size()>0){
         String query_risposte="INSERT INTO risposte(id_questionario_utente,id_domanda,stato) VALUES ";

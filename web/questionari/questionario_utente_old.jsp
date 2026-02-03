@@ -1,4 +1,3 @@
-<%@page import="java.util.LinkedHashMap"%>
 <%@page import="beans.Domanda"%>
 <%@page import="gestioneDB.GestioneSezioni"%>
 <%@page import="beans.Sezione"%>
@@ -68,7 +67,7 @@ if(!id_da_inserire.equals("")){
 }
 /** CANCELLO LE DOMANDE IN PIU ***/
 if(!id_da_rimuovere.equals("")){
-    //Utility.getIstanza().query("DELETE FROM risposte WHERE id_domanda IN ("+id_da_rimuovere+") ");
+    Utility.getIstanza().query("DELETE FROM risposte WHERE id_domanda IN ("+id_da_rimuovere+") ");
 }
 
 
@@ -202,21 +201,21 @@ Map<String,String> mappa_domande_risposte=GestioneQuestionari.getIstanza().mappa
                 return checkedValues;
             }
             
-            function salva_valutazione(id_questionario_utente, percentuale_valutazione){
-                mostra_loader("Salvataggio valutazione in corso...");
+            function salva_valutazione(id_questionario_utente){
                 $.ajax({
                     type: "POST",
-                    url: "<%=Utility.url%>/questionari/__salva_valutazione.jsp?id_questionario_utente="+id_questionario_utente+"&percentuale_valutazione="+percentuale_valutazione,
+                    url: "<%=Utility.url%>/questionari/__salva_valutazione.jsp?id_questionario_utente="+id_questionario_utente,
+                    data: "",
                     dataType: "html",
                     success: function(msg){
-                        location.href='<%=Utility.url%>/questionari/questionario_utente.jsp?id_questionario_utente=<%=id_questionario_utente%>&id_questionario=<%=id_questionario%>';
+                        location.href='<%=Utility.url%>/questionari/questionario_utente.jsp?id_questionario_utente=<%=id_questionario_utente%>&id_questionario=<%=id_questionario%>&last_focus='+last_focus;
                     },
                     error: function(){
                         alert("IMPOSSIBILE EFFETTUARE L'OPERAZIONE");
                     }
                 });
+                
             }
-
             
             function controlla_risposte(id_questionario_utente,inField) {
                 var errore="";
@@ -242,35 +241,6 @@ Map<String,String> mappa_domande_risposte=GestioneQuestionari.getIstanza().mappa
                     $("#errore").show();
                 }
                 return toReturn;
-            }
-            
-             function function_modifica_questionario_utente(id_questionario_utente,campo_da_modificare, new_valore){
-                var last_focus=$("#last_focus").val();
-                if(campo_da_modificare=="stato" && new_valore=="1"){
-                    if(!confirm("Sei sicuro di voler inviare il questionario?\nNB:non potrà essere più modificato."))
-                        return;
-                }
-                if(campo_da_modificare=="stato" && new_valore=="b"){
-                    if(!confirm("Sei sicuro di voler trasformare il questionario in bozza?\nNB:potrai apportare modifiche al questionario."))
-                        return;
-                }
-                if(campo_da_modificare=="valutazione" && new_valore=="0"){
-                    if(!confirm("Sei sicuro di voler modificare le valutazioni del questionario?"))
-                        return;
-                }
-                mostra_loader("");
-                $.ajax({
-                    type: "POST",
-                    url: "<%=Utility.url%>/questionari/__modifica_questionario_utente.jsp?id_questionario_utente="+id_questionario_utente+"&campo_da_modificare="+campo_da_modificare+"&new_valore="+new_valore,
-                    data: "",
-                    dataType: "html",
-                    success: function(msg){
-                        location.href='<%=Utility.url%>/questionari/questionario_utente.jsp?id_questionario_utente=<%=id_questionario_utente%>&id_questionario=<%=id_questionario%>&last_focus='+last_focus;
-                    },
-                    error: function(){
-                        alert("IMPOSSIBILE EFFETTUARE L'OPERAZIONE");
-                    }
-                });
             }
             
             function rigenera_questionario(id_questionario_utente,id_questionario){
@@ -331,37 +301,69 @@ Map<String,String> mappa_domande_risposte=GestioneQuestionari.getIstanza().mappa
                 <% if(qu.getData_ora_invio()==null && utente.is_admin_questionari()){%>
                     <!-- button class="pulsante_tabella color_orange float-right" onclick="rigenera_questionario('<%=id_questionario_utente%>','<%=id_questionario%>')">Aggiorna Questionario</button-->
                 <%}%>
-            </h1>
-            <% if(utente.is_admin_questionari()){%>
-                <div class="box">
-                    <% if(qu.is_bozza()){%>
-                        <div class="tag color_rifiutata float-right">
-                            <% if(utente.is_italiano()){%>BOZZA<%}else{%>DRAFT<%}%>
-                        </div>
-                    <%}%>
-                    <% if(qu.getData_ora_valutazione()!=null){%>
-                        <div class="tag color_green float-right">Valutato il <%=qu.getData_ora_valutazione_it()%></div>
-                    <%}else{%>
-                        <p>Inserire la valutazione da 0 a 10 per ogni risposta.</p>
-                    <%}%>
-                    <% if(qu.getData_ora_invio()!=null){%>
-                        <div class="tag color_green float-right">Inviato il <%=qu.getData_ora_invio_it()%></div>
-                    <%}%>
-                    
-                    <div class="height-10"></div>
-                    <% if(utente.is_admin_questionari() && qu.getData_ora_invio()!=null){%>
+                <% if(qu.getData_ora_valutazione()!=null){%>
+                    <div class="tag color_green float-right">Valutato il <%=qu.getData_ora_valutazione_it()%></div>
+                <%}%>
+                <% if(qu.getData_ora_invio()!=null){%>
+                    <div class="tag color_green float-right">Inviato il <%=qu.getData_ora_invio_it()%></div>
+                    <% if(utente.is_admin_questionari()){%>
                         <button class="pulsante_tabella color_orange float-right" value="b" name="stato" onclick="modifica_questionario_utente('<%=id_questionario_utente%>',this)">Passa in Bozza</button>
                     <%}%>
-                    <% if(utente.is_admin_questionari()){%>
-                        <a href="#valutazione" class="pulsante_tabella color_lavorazione float-right">Vedi Valutazione</a>
-                    <%}%>
-                    
-                    <button class="pulsante_tabella float-right" onclick="window.print()">
-                        <% if(utente.is_italiano()){%>Stampa<%}else{%>Print<%}%>
-                    </button>
-                    
-                    <div class="clear"></div>
+                <%}%>
+                <% if(qu.is_bozza()){%>
+                <div class="tag color_rifiutata float-right">
+                    <% if(utente.is_italiano()){%>BOZZA<%}else{%>DRAFT<%}%>
                 </div>
+                <%}%>
+                <button class="pulsante_tabella float-right" onclick="window.print()">
+                    <% if(utente.is_italiano()){%>Stampa<%}else{%>Print<%}%>
+                </button>
+            </h1>
+            <% if(qu.getData_ora_valutazione()!=null){
+                Map<String,Double> mappa_valutazioni=GestioneQuestionari.getIstanza().mappa_valutazioni_sezioni(id_questionario_utente);
+                Map<String,Double> mappa_valutazioni_massime_sezioni=GestioneQuestionari.getIstanza().mappa_valutazioni_massime_sezioni(id_questionario_utente);
+                Map<String,Double> mappa_valutazioni_massime_questionari_utenti=GestioneQuestionari.getIstanza().mappa_valutazioni_massime_questionari_utenti(id_questionario);
+                //System.out.println(mappa_valutazioni_massime_questionari_utenti.toString());
+                
+            %>
+                <div class="box">
+                    <b>Valutazione Questionario</b>
+                    <table class="tabella">
+                        <tr>
+                            <%for(Sezione s:GestioneSezioni.getIstanza().ricerca("id_questionario="+id_questionario)){%>
+                                <th style="text-align: center;"><%=s.getTesto_ita()%></th>
+                            <%}%>
+                            <th>Tot. Questionario</th>
+                        </tr>
+                        <tr>
+                            <%for(Sezione s:GestioneSezioni.getIstanza().ricerca(" id_questionario="+id_questionario)){%>
+                                <td style="text-align: center;">
+                                    <% if(mappa_valutazioni.get(s.getId())!=null){%>
+                                        <%=Utility.elimina_zero(mappa_valutazioni.get(s.getId()))%>/<%=Utility.elimina_zero(mappa_valutazioni_massime_sezioni.get(s.getId()))%>
+                                        <br>
+                                        <h5><%=Utility.elimina_zero(Utility.arrotonda_double(mappa_valutazioni.get(s.getId())*100/mappa_valutazioni_massime_sezioni.get(s.getId()),2))%>%</h5>
+                                    <%}else{%>
+                                        0
+                                    <%}%>
+                                </td>
+                            <%}%>
+                            <td style="text-align: center;">
+                                <% if(mappa_valutazioni_massime_questionari_utenti.get(qu.getUtente().getId())!=null){%>
+                                    <b><%=Utility.elimina_zero(qu.getValutazione())%>/<%=Utility.elimina_zero(mappa_valutazioni_massime_questionari_utenti.get(qu.getUtente().getId()))%></b>
+                                    <h4><%=Utility.elimina_zero(Utility.arrotonda_double(qu.getValutazione()*100/mappa_valutazioni_massime_questionari_utenti.get(qu.getUtente().getId()),2))%>%</h4>
+                                <%}else{%>
+                                    0
+                                <%}%>
+                            </td>
+                        </tr>
+                    </table>
+                    <% if(qu.getData_ora_invio()!=null && qu.getData_ora_valutazione()!=null && utente.is_admin_questionari()){%>
+                        <div class="height-10"></div>
+                        <div class="height-10"></div>
+                        <button class="pulsante float-right"  onclick="modifica_questionario_utente('<%=id_questionario_utente%>',this)" name="valutazione" value="0">Modifica Valutazione</button>
+                    <%}%>
+                </div>
+                <div class="height-10"></div>
             <%}%>
             <input type='hidden' id='last_focus' readonly="true" tabindex="-1" value="<%=last_focus%>">
             <input type='hidden' id='scroll' readonly="true" tabindex="-1" value="<%=scroll%>" >
@@ -373,29 +375,13 @@ Map<String,String> mappa_domande_risposte=GestioneQuestionari.getIstanza().mappa
                             <th style="width: 100px;">Nr.</th>
                             <th><% if(utente.is_italiano()){%>Domanda<%}else{%>Question<%}%></th>
                             <th><% if(utente.is_italiano()){%>Risposta<%}else{%>Answer<%}%></th>
-                            <%if(utente.is_admin_questionari() ){%>
+                            <%if(utente.is_admin_questionari()&& qu.getData_ora_invio()!=null){%>
                                 <th style="width: 80px;">Peso</th>
                                 <th style="width: 80px;">Valutazione</th>
                             <%}%>
                         </tr>
-                        <%  double tot_disponibile=0;
-                            double tot_risposte=0;
-                            Map<String,Double> mappa_sezione_disponibile=new LinkedHashMap<String, Double>();
-                            Map<String,Double> mappa_sezione_risposte=new LinkedHashMap<String, Double>();
-                            for(Risposta r:risposte){
-                        %>
-                            <% if(r.getDomanda().getVisibile_id().equals("") || mappa_domande_risposte.get(r.getDomanda().getVisibile_id()).contains(r.getDomanda().getVisibile_condizione())){
-                                tot_disponibile+=r.getDomanda().getPeso()*10;
-                                tot_risposte+=r.getDomanda().getPeso()*r.getValutazione();
-                                if(mappa_sezione_disponibile.get(r.getDomanda().getSezione().getId())==null)
-                                    mappa_sezione_disponibile.put(r.getDomanda().getSezione().getId(),r.getDomanda().getPeso()*10);
-                                else
-                                    mappa_sezione_disponibile.put(r.getDomanda().getSezione().getId(),mappa_sezione_disponibile.get(r.getDomanda().getSezione().getId())+(r.getDomanda().getPeso()*10));
-                                if(mappa_sezione_risposte.get(r.getDomanda().getSezione().getId())==null)
-                                    mappa_sezione_risposte.put(r.getDomanda().getSezione().getId(),r.getDomanda().getPeso()*r.getValutazione());
-                                else
-                                    mappa_sezione_risposte.put(r.getDomanda().getSezione().getId(),mappa_sezione_risposte.get(r.getDomanda().getSezione().getId())+(r.getDomanda().getPeso()*r.getValutazione()));
-                            %>
+                        <% for(Risposta r:risposte){%>
+                            <% if(r.getDomanda().getVisibile_id().equals("") || mappa_domande_risposte.get(r.getDomanda().getVisibile_id()).contains(r.getDomanda().getVisibile_condizione())){%>
                             <tr>
                                 <td>
                                     <%=r.getDomanda().getSezione().getNr()%>
@@ -470,78 +456,31 @@ Map<String,String> mappa_domande_risposte=GestioneQuestionari.getIstanza().mappa
                                         <%}%>    
                                     <%}%>
                                 </td>
-                                <%if(utente.is_admin_questionari()){%>
-                                    <td style="text-align: center;">
+                                <%if(utente.is_admin_questionari()&& qu.getData_ora_invio()!=null){%>
+                                    <td style="text-align: right;">
                                         <%=Utility.elimina_zero(r.getDomanda().getPeso())%>
                                     </td>
-                                    <td style="text-align: center;">
-                                        <% if(qu.getData_ora_valutazione()!=null){%> 
-                                            <%=Utility.elimina_zero(r.getValutazione())%>
-                                        <%}else{%>
-                                            <input style="text-align: right;<% if(qu.getData_ora_valutazione()!=null){%> pointer-events: none;<%}%>" type="number" id="<%=r.getId()%>"  name="valutazione" min="0" max="10" onchange="modifica_risposta('<%=r.getId()%>',this)" value="<%=Utility.elimina_zero(r.getValutazione())%>" old_value="<%=Utility.elimina_zero(r.getValutazione())%>">
-                                        <%}%>
+                                    <td style="text-align: right;">
+                                        <input style="text-align: right;<% if(qu.getData_ora_valutazione()!=null){%> pointer-events: none;<%}%>" type="number" id="<%=r.getId()%>"  name="valutazione" min="0" max="10" onchange="modifica_risposta('<%=r.getId()%>',this)" value="<%=Utility.elimina_zero(r.getValutazione())%>" old_value="<%=Utility.elimina_zero(r.getValutazione())%>">
                                     </td>
                                 <%}%>
                             </tr>
                             <%}%>
                         <%}%>
-                        
                     </table>
-                       
-            <% if(qu.getData_ora_valutazione()!=null || true){%>
-                <a name="valutazione"></a>
-                <div class="box">
-                    <b>Valutazione Questionario</b>
-                    <table class="tabella">
-                        <tr>
-                            <%for(Sezione s:GestioneSezioni.getIstanza().ricerca("id_questionario="+id_questionario)){%>
-                                <th style="text-align: center;"><%=s.getTesto_ita()%></th>
+                    <div class="box" id="errore" style="display: none;border:1px solid red;"></div>
+                    <% if(qu.getData_ora_invio()==null){%>
+                        <button class="pulsante float-right" name="stato" value="1" onclick="controlla_risposte('<%=id_questionario_utente%>',this);" >
+                            <% if(utente.is_italiano()){%>
+                                Invia Questionario
+                            <%}else{%>
+                                Submit
                             <%}%>
-                            <th>Tot. Questionario</th>
-                        </tr>
-                        <tr>
-                            <%for(Sezione s:GestioneSezioni.getIstanza().ricerca(" id_questionario="+id_questionario)){%>
-                                <td style="text-align: center;">
-                                    <% if(mappa_sezione_disponibile.get(s.getId())!=null){%>
-                                        <%=Utility.elimina_zero(mappa_sezione_risposte.get(s.getId()))%>/<%=Utility.elimina_zero(mappa_sezione_disponibile.get(s.getId()))%>
-                                        <br>
-                                        <h5><%=Utility.elimina_zero(Utility.arrotonda_double(mappa_sezione_risposte.get(s.getId())*100/mappa_sezione_disponibile.get(s.getId()),2))%>%</h5>
-                                    <%}else{%>
-                                        0
-                                    <%}%>
-                                </td>
-                            <%}%>
-                            <td style="text-align: center;">
-                                
-                                <b><%=tot_risposte%>/<%=tot_disponibile%></b>
-                                <h4><%=Utility.elimina_zero(Utility.arrotonda_double(tot_risposte*100/tot_disponibile,2))%>%</h4>
-
-                            </td>
-                        </tr>
-                    </table>
-                    <% if(qu.getData_ora_invio()!=null && qu.getData_ora_valutazione()!=null && utente.is_admin_questionari()){%>
-                        <div class="height-10"></div>
-                        <div class="height-10"></div>
-                        <button class="pulsante float-right" style="position: fixed; right: 0px; bottom:0px;"  onclick="modifica_questionario_utente('<%=id_questionario_utente%>',this)" name="data_ora_valutazione" value="null">Modifica Valutazione</button>
+                        </button>
                     <%}%>
-                </div>
-                <div class="height-10"></div>
-            <%}%>
-            
-                <div class="box" id="errore" style="display: none;border:1px solid red;"></div>
-            
-                <% if(qu.getData_ora_invio()==null){%>
-                    <button class="pulsante float-right" style="position: fixed; right: 0px; bottom:0px;"  name="stato" value="1" onclick="controlla_risposte('<%=id_questionario_utente%>',this);" >
-                        <% if(utente.is_italiano()){%>
-                            Invia Questionario
-                        <%}else{%>
-                            Submit
-                        <%}%>
-                    </button>
-                <%}%>
-                <% if(qu.getData_ora_invio()!=null && qu.getData_ora_valutazione()==null && utente.is_admin_questionari()){%>    
-                    <button class="pulsante float-right" style="position: fixed; right: 0px; bottom:0px;"  onclick="salva_valutazione('<%=id_questionario_utente%>','<%=Utility.arrotonda_double(tot_risposte*100/tot_disponibile,2)%>')" >Salva Valutazione</button>
-                <%}%>
+                    <% if(qu.getData_ora_invio()!=null && qu.getData_ora_valutazione()==null && utente.is_admin_questionari()){%>
+                        <button class="pulsante float-right"  onclick="salva_valutazione('<%=id_questionario_utente%>',this)" >Salva Valutazione</button>
+                    <%}%>
                     
                 </div>
             </div>

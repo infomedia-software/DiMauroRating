@@ -91,7 +91,7 @@
                     <td>
                         <% if(q.getData_ora_valutazione()!=null){%>
                            <% if(mappa_valutazioni_massime_questionari_utenti.get(q.getUtente().getId())!=null){%>
-                                <%=Utility.elimina_zero(Utility.arrotonda_double(q.getValutazione()*100/mappa_valutazioni_massime_questionari_utenti.get(q.getUtente().getId()),2))%>%
+                                <%=Utility.elimina_zero(q.getValutazione())%>%
                            <%}%>
                         <%}%>
                         <% if(q.getData_ora_valutazione()==null && q.getData_ora_invio()!=null){%>
