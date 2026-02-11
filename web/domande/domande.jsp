@@ -133,6 +133,8 @@
         <div id='container'>
             <h2>
                 Domande del questionario <%=questionario.getNr()%>/<%=questionario.getAnno()%> - <%=questionario.getTitolo_ita()%>
+                <div class="clear"></div>
+                <a class="pulsante float-left" target="_blank" href="stampa_domande.jsp?id_questionario=<%=id_questionario%>">Stampa</a>
                 <button class="pulsante color_green float-right" onclick="mostra_popup('_nuova_domanda.jsp?id_questionario=<%=id_questionario%>');"><img src="<%=Utility.img_add%>">Nuova Domanda</button>
             </h2>
             <div class="height-10"></div>
