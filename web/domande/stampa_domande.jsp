@@ -36,10 +36,8 @@
                 font-size: 12px;
                 padding:2px;
                 margin:2px;
-                border:0.5px solid gray;
-                border-top: none;
-                border-bottom: none;
-                 page-break-inside: avoid;
+                border:0.5px solid gray;                
+                page-break-inside: avoid;
                 break-inside: avoid;
                 -webkit-column-break-inside: avoid;
             }
@@ -55,11 +53,17 @@
             h3{
                 text-align: center;
             }
+            th,td{
+                text-align: justify;
+                padding:2.5px;
+                vertical-align: top;
+            }
         </style>
     </head>
     <body>
     
         <div id='container'>
+            <div class="box">
             <h2>Domande del questionario <%=questionario.getNr()%>/<%=questionario.getAnno()%> - <%=questionario.getTitolo_ita()%></h2>
                 <% //int max_ordinamento=1; 
                 String id_sezione_corrente="";
@@ -73,66 +77,67 @@
                         <%}%>
                     <h3>Sezione <%=d.getSezione().getTesto_ita()%></h3>
                 <%}%>
-                <div class="box">
+                
+                <table style="width: 100%;">
+                    <tr>
                     <% if(d.getVisibile_id().equals("")){%>
-                        <h5>Domanda <%=d.getSezione().getTesto_ita()%> <%=d.getSezione().getNr()%>.<%=d.getNr()%></h5>
+                        <td colspan="4"><h5>Domanda <%=d.getSezione().getTesto_ita()%> <%=d.getSezione().getNr()%>.<%=d.getNr()%></h5></td>
                     <%}%>
-                    <div class="width-50 float-left"></div>
-                    
-                    <div class="clear"></div>
-                    <div class="width-50 float-left">
-                        <div class="etichetta">Domanda in italiano</div>
-                        <div class="valore">
+                    </tr>
+                    <tr>
+                        <th style="width: 15%;">Domanda in italiano</th>
+                        <td style="width: 35%;">
                             <%=Utility.standardizza_textarea(d.getTesto_ita())%>
-                        </div>
-                    </div>
-                    <div class="width-50 float-left">
-                        <div class="etichetta">Domanda in inglese</div>
-                        <div class="valore">
+                        </td>
+                    
+                        <th style="width: 15%;">Domanda in inglese</th>
+                        <td style="width: 35%;">
                             <%=Utility.standardizza_textarea(d.getTesto_eng())%>
-                        </div>
-                    </div>
-                    <div class="width-50 float-left">
-                        <div class="etichetta">Tipologia</div>
-                        <div class="valore">
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Tipologia</th>
+                        <td>
                             <% if(d.is_si_no()){%>Si/No<%}%>
                             <% if(d.is_testo()){%>Testuale<%}%>
                             <% if(d.is_numero()){%>Numerica<%}%>
                             <% if(d.is_select()){%>Scelta Esclusiva<%}%>
                             <% if(d.is_checkbox()){%>Scelta Multipla<%}%>
                             <% if(d.is_allegato()){%>File Allegato<%}%>
-                        </div>
+                        </td>
                         <% if(d.is_select() || d.is_checkbox()){%>
-                            <div class="etichetta">Valori della scelta (separati da virgola)</div>
-                            <div class="valore">
+                            <th>Valori della scelta (separati da virgola)</th>
+                            <td>
                                 <%=Utility.standardizza_textarea(d.getValori())%>
-                            </div>
+                            </td>
+                        <%}else{%>
+                            <td></td>
+                            <td></td>
                         <%}%>
-                    </div>
-                    <div class="width-50 float-left">
-                        <div class="etichetta">Peso</div>
-                        <div class="valore">
+                    </tr>
+                    <tr>
+                        <th>Peso</th>
+                        <td>
                             <%=Utility.elimina_zero(d.getPeso())%>
-                        </div>
-                            <% if(!d.getVisibile_id().equals("")){%>
-                            <div class="etichetta">Visibile se la domanda</div>
-                            <div class="valore">
-                                    <% if(d.getVisibile_id().equals("")){%>Sempre<%}%>
-                                    <% for(Domanda dd:domande){%>
-                                        <% if(d.getVisibile_id().equals(dd.getId())){%><%=dd.getSezione().getNr()%>.<%=dd.getNr()%><%}%>
-                                    <%}%>
-                            </div>
-                            
-                                <div class="etichetta">è uguale a </div>
-                                <div class="valore">
-                                    <%=d.getVisibile_condizione()%>
-                                </div>
-                            
-                            <%}%>
-                    </div>
-                    <div class="clear"></div>
-                </div>
+                        </td>
+                        <% if(!d.getVisibile_id().equals("")){%>
+                            <th>Visibile se la domanda</th>
+                            <td>
+                                <% if(d.getVisibile_id().equals("")){%>Sempre<%}%>
+                                <% for(Domanda dd:domande){%>
+                                    <% if(d.getVisibile_id().equals(dd.getId())){%><%=dd.getSezione().getNr()%>.<%=dd.getNr()%><%}%>
+                                <%}%>
+                                è uguale a  <%=d.getVisibile_condizione()%>
+                                
+                            </td>
+                        <%}else{%>
+                            <td></td>
+                            <td></td>
+                        <%}%>
+                    </tr>
+                </table>    
             <%}%>   
+        </div>
         </div>
     </body>
 </html>
